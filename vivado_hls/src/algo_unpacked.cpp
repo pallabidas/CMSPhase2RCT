@@ -1,4 +1,4 @@
-#include <stdio.h>                                                                                                                                                                   
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
@@ -55,15 +55,8 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 
    //#pragma HLS ARRAY_PARTITION variable=link_in_2d complete dim=0
    //#pragma HLS ARRAY_PARTITION variable=link_out_2d complete dim=0
-   /*
-      for (int idx = 0; idx < N_CH_IN; idx++) {
-#pragma HLS UNROLL
-link_in[idx].range(63, 0) = link_in_2d[idx][0];
-link_in[idx].range(127, 64) = link_in_2d[idx][1];
-link_in[idx].range(191, 128) = link_in_2d[idx][2];
-}*/
 
-for (int idx = 0; idx < N_CH_OUT; idx++)
+   for (int idx = 0; idx < N_CH_OUT; idx++)
 {
 #pragma HLS UNROLL
    /* link_in_2d[idx][0]=0;

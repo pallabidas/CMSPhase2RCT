@@ -9,7 +9,7 @@ using namespace std;
 
 
 uint16_t getPeakBinOf5(uint16_t et[NCrystalsPerEtaPhi], uint16_t etSum) {
-#pragma HLS PIPELINE II=1
+#pragma HLS PIPELINE II=3
 #pragma HLS ARRAY_PARTITION variable=et complete dim=0
    uint16_t iEtSum = 
       (et[0] >> 1)                +  // 0.5xet[0]
@@ -32,7 +32,7 @@ bool getClustersInTower(uint16_t crystals[NCrystalsPerEtaPhi][NCrystalsPerEtaPhi
       uint16_t *towerET,
       uint16_t *clusterET) {
 
-#pragma HLS PIPELINE II=1
+#pragma HLS PIPELINE II=3
 #pragma HLS ARRAY_PARTITION variable=crystals complete dim=0
 
    uint16_t phiStripSum[NCrystalsPerEtaPhi];
@@ -130,7 +130,7 @@ bool getClustersIn3x4Region(uint16_t crystalsIn3x4Region[3][4][5][5],
       uint16_t sortedClusterIn3x4_towerET[NClustersPer3x4Region],
       uint16_t sortedClusterIn3x4_ET[NClustersPer3x4Region]
       ){
-#pragma HLS PIPELINE II=1
+#pragma HLS PIPELINE II=3
 #pragma HLS ARRAY_PARTITION variable=crystalsIn3x4Region complete dim=0
 #pragma HLS ARRAY_PARTITION variable=sortedClusterIn3x4_peakEta complete dim=0
 #pragma HLS ARRAY_PARTITION variable=sortedClusterIn3x4_peakPhi complete dim=0
@@ -280,37 +280,39 @@ bool getClustersIn3x4Region(uint16_t crystalsIn3x4Region[3][4][5][5],
 	 iCluster++;
       }
    }
-   uint16_t xx;
 
-   for(int i=0;i<16;i=i+4){   
-#pragma HLS unroll
-      if(toSortClusterIn3x4_ET[i]<toSortClusterIn3x4_ET[i+1]){
-	 xx=toSortClusterIn3x4_ET[i+1];
-	 toSortClusterIn3x4_ET[i+1]=toSortClusterIn3x4_ET[i];
-	 toSortClusterIn3x4_ET[i]=xx;
-	 xx=toSortClusterIn3x4_peakEta[i];
-	 toSortClusterIn3x4_peakEta[i]=toSortClusterIn3x4_peakEta[i+1];
-	 toSortClusterIn3x4_peakEta[i+1]=xx;
-	 xx=toSortClusterIn3x4_peakPhi[i];
-	 toSortClusterIn3x4_peakPhi[i]=toSortClusterIn3x4_peakPhi[i+1];
-	 toSortClusterIn3x4_peakPhi[i+1]=xx;
-      }
 
-      if(toSortClusterIn3x4_ET[i+2]>toSortClusterIn3x4_ET[i+3]){
-	 xx=toSortClusterIn3x4_ET[i+3];
-	 toSortClusterIn3x4_ET[i+3]=toSortClusterIn3x4_ET[i+2];
-	 toSortClusterIn3x4_ET[i+2]=xx;
-	 xx=toSortClusterIn3x4_peakEta[i+2];
-	 toSortClusterIn3x4_peakEta[i+2]=toSortClusterIn3x4_peakEta[i+3];
-	 toSortClusterIn3x4_peakEta[i+3]=xx;
-	 xx=toSortClusterIn3x4_peakPhi[i+2];
-	 toSortClusterIn3x4_peakPhi[i+2]=toSortClusterIn3x4_peakPhi[i+3];
-	 toSortClusterIn3x4_peakPhi[i+3]=xx;
-      }
-   }
-
-   // passing control to second level of quaternary comparators                                                                                                                     
-   bitonic_1_4(toSortClusterIn3x4_ET,toSortClusterIn3x4_peakEta,toSortClusterIn3x4_peakPhi);
+//--   uint16_t xx;
+//--
+//--   for(int i=0;i<16;i=i+4){   
+//--#pragma HLS unroll
+//--      if(toSortClusterIn3x4_ET[i]<toSortClusterIn3x4_ET[i+1]){
+//--	 xx=toSortClusterIn3x4_ET[i+1];
+//--	 toSortClusterIn3x4_ET[i+1]=toSortClusterIn3x4_ET[i];
+//--	 toSortClusterIn3x4_ET[i]=xx;
+//--	 xx=toSortClusterIn3x4_peakEta[i];
+//--	 toSortClusterIn3x4_peakEta[i]=toSortClusterIn3x4_peakEta[i+1];
+//--	 toSortClusterIn3x4_peakEta[i+1]=xx;
+//--	 xx=toSortClusterIn3x4_peakPhi[i];
+//--	 toSortClusterIn3x4_peakPhi[i]=toSortClusterIn3x4_peakPhi[i+1];
+//--	 toSortClusterIn3x4_peakPhi[i+1]=xx;
+//--      }
+//--
+//--      if(toSortClusterIn3x4_ET[i+2]>toSortClusterIn3x4_ET[i+3]){
+//--	 xx=toSortClusterIn3x4_ET[i+3];
+//--	 toSortClusterIn3x4_ET[i+3]=toSortClusterIn3x4_ET[i+2];
+//--	 toSortClusterIn3x4_ET[i+2]=xx;
+//--	 xx=toSortClusterIn3x4_peakEta[i+2];
+//--	 toSortClusterIn3x4_peakEta[i+2]=toSortClusterIn3x4_peakEta[i+3];
+//--	 toSortClusterIn3x4_peakEta[i+3]=xx;
+//--	 xx=toSortClusterIn3x4_peakPhi[i+2];
+//--	 toSortClusterIn3x4_peakPhi[i+2]=toSortClusterIn3x4_peakPhi[i+3];
+//--	 toSortClusterIn3x4_peakPhi[i+3]=xx;
+//--      }
+//--   }
+//--
+//--   // passing control to second level of quaternary comparators                                                                                                                     
+//--   bitonic_1_4(toSortClusterIn3x4_ET,toSortClusterIn3x4_peakEta,toSortClusterIn3x4_peakPhi);
 
    for(int iSort=0; iSort<NClustersPer3x4Region; iSort++){
       sortedClusterIn3x4_ET[iSort]      =toSortClusterIn3x4_ET[iSort]; 
@@ -333,7 +335,7 @@ bool getClustersInCard(
       uint16_t SortedCluster_towerET[NClustersPerCard],
       uint16_t SortedCluster_ET[NClustersPerCard]
       ){
-#pragma HLS PIPELINE II=1
+#pragma HLS PIPELINE II=3
 #pragma HLS ARRAY_PARTITION variable=crystals complete dim=0
 #pragma HLS ARRAY_PARTITION variable=SortedCluster_peakEta complete dim=0
 #pragma HLS ARRAY_PARTITION variable=SortedCluster_peakPhi complete dim=0
@@ -510,36 +512,36 @@ bool getClustersInCard(
       }
    }
 
-   uint16_t xx;
-   for(int ii=0; ii<16; ii=ii+4){
-#pragma HLS unroll 
-      if(toSort_ET[ii] < toSort_ET[ii+1]){
-	 xx=toSort_ET[ii+1];
-	 toSort_ET[ii+1]=toSort_ET[ii];
-	 toSort_ET[ii]=xx;
-	 xx=toSort_peakEta[ii];
-	 toSort_peakEta[ii]=toSort_peakEta[ii+1];
-	 toSort_peakEta[ii+1]=xx;
-	 xx=toSort_peakPhi[ii];
-	 toSort_peakPhi[ii]=toSort_peakPhi[ii+1];
-	 toSort_peakPhi[ii+1]=xx;
-      }
-
-      if(toSort_ET[ii+2]>toSort_ET[ii+3])
-      {xx=toSort_ET[ii+3];
-	 toSort_ET[ii+3]=toSort_ET[ii+2];
-	 toSort_ET[ii+2]=xx;
-	 xx=toSort_peakEta[ii+2];
-	 toSort_peakEta[ii+2]=toSort_peakEta[ii+3];
-	 toSort_peakEta[ii+3]=xx;
-	 xx=toSort_peakPhi[ii+2];
-	 toSort_peakPhi[ii+2]=toSort_peakPhi[ii+3];
-	 toSort_peakPhi[ii+3]=xx;
-      }    
-   }        
-   // passing control to second level of quaternary comparators
-   bitonic_1_4(toSort_ET,toSort_peakEta,toSort_peakPhi);
-   //Sorting ends, assigning sorted clusters to final set of variables.
+//   uint16_t xx;
+//   for(int ii=0; ii<16; ii=ii+4){
+//#pragma HLS unroll 
+//      if(toSort_ET[ii] < toSort_ET[ii+1]){
+//	 xx=toSort_ET[ii+1];
+//	 toSort_ET[ii+1]=toSort_ET[ii];
+//	 toSort_ET[ii]=xx;
+//	 xx=toSort_peakEta[ii];
+//	 toSort_peakEta[ii]=toSort_peakEta[ii+1];
+//	 toSort_peakEta[ii+1]=xx;
+//	 xx=toSort_peakPhi[ii];
+//	 toSort_peakPhi[ii]=toSort_peakPhi[ii+1];
+//	 toSort_peakPhi[ii+1]=xx;
+//      }
+//
+//      if(toSort_ET[ii+2]>toSort_ET[ii+3])
+//      {xx=toSort_ET[ii+3];
+//	 toSort_ET[ii+3]=toSort_ET[ii+2];
+//	 toSort_ET[ii+2]=xx;
+//	 xx=toSort_peakEta[ii+2];
+//	 toSort_peakEta[ii+2]=toSort_peakEta[ii+3];
+//	 toSort_peakEta[ii+3]=xx;
+//	 xx=toSort_peakPhi[ii+2];
+//	 toSort_peakPhi[ii+2]=toSort_peakPhi[ii+3];
+//	 toSort_peakPhi[ii+3]=xx;
+//      }    
+//   }        
+//   // passing control to second level of quaternary comparators
+//   bitonic_1_4(toSort_ET,toSort_peakEta,toSort_peakPhi);
+//   //Sorting ends, assigning sorted clusters to final set of variables.
 
 
    for(int kk=0; kk<10; kk++){ // kk<NClustersPerCard : For now sending 10 only
