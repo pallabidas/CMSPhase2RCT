@@ -109,7 +109,7 @@ crystalLoop: for(int crystalID = 0; crystalID < NCaloLayer1Eta * NCaloLayer1Phi 
     sortedCluster_towerET[icluster]=0;
     sortedCluster_ET[icluster]=0;
  }
- printf(" ............calling function ..........\n");
+
  bool success = getClustersInCard(crystals, 
        sortedCluster_peakEta, 
        sortedCluster_peakPhi, 
