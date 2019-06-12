@@ -119,7 +119,7 @@ bool mergeClusters(
       *tet2 = itet2;
    }   
    return true;
-}     
+}
 
 
 bool getClustersIn3x4Region(uint16_t crystalsIn3x4Region[3][4][5][5],
@@ -415,8 +415,8 @@ bool getClustersInCard(
 #pragma HLS UNROLL
 	 preMergeClusterPeakEta[region+k]  =peak_Eta[k];
 	 preMergeClusterPeakPhi[region+k]  =peak_Phi[k];
-	 preMergeClusterTowerEta[region+k] =0;  // tower_Eta[k];
-	 preMergeClusterTowerPhi[region+k] =0; //tower_Phi[k];
+	 preMergeClusterTowerEta[region+k] =tower_Eta[k] + iRegion; //CHECK IT
+	 preMergeClusterTowerPhi[region+k] =tower_Phi[k];
 	 preMergeClusterTowerET[region+k]  =tower_ET[k];
 	 preMergeClusterET[region+k]       =clusters_ET[k];
 
@@ -468,8 +468,8 @@ bool getClustersInCard(
 #pragma HLS UNROLL
       preMergeClusterPeakEta[region+k]  =peak_Eta[k];
       preMergeClusterPeakPhi[region+k]  =peak_Phi[k];
-      preMergeClusterTowerEta[region+k] =0;  // tower_Eta[k];
-      preMergeClusterTowerPhi[region+k] =0; //tower_Phi[k];
+      preMergeClusterTowerEta[region+k] =tower_Eta[k] + i2x4region;
+      preMergeClusterTowerPhi[region+k] =tower_Phi[k];
       preMergeClusterTowerET[region+k]  =tower_ET[k];
       preMergeClusterET[region+k]       =clusters_ET[k];
 
@@ -548,9 +548,9 @@ bool getClustersInCard(
 #pragma HLS UNROLL
       SortedCluster_peakEta[kk]  = toSort_peakEta[kk];
       SortedCluster_peakPhi[kk]  = toSort_peakPhi[kk];
-      SortedCluster_towerEta[kk] = 0; //preMergeClusterTowerEta[kk];
-      SortedCluster_towerPhi[kk] = 0; //preMergeClusterTowerPhi[kk];
-      SortedCluster_towerET[kk]  = 0; //preMergeClusterTowerET[kk];
+      SortedCluster_towerEta[kk] = toSort_towerEta[kk]; //preMergeClusterTowerEta[kk];
+      SortedCluster_towerPhi[kk] = toSort_towerPhi[kk]; //preMergeClusterTowerPhi[kk];
+      SortedCluster_towerET[kk]  = toSort_towerET[kk]; //preMergeClusterTowerET[kk];
       SortedCluster_ET[kk]       = toSort_ET[kk];
    }
 
