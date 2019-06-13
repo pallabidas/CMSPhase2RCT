@@ -22,8 +22,11 @@ add_files -tb src/algo_unpacked_tb.cpp
 add_files -tb data/test_random_set2_inp.txt
 add_files -tb data/test_random_set2_out_ref.txt
 
-add_files -tb data/test_random_set2_1_inp.txt
-add_files -tb data/test_random_set2_1_out_ref.txt
+add_files -tb data/tv_RCT1_3CS_set1_inp.txt
+add_files -tb data/tv_RCT1_3CS_set1_out_ref.txt
+
+add_files -tb data/tv_RCT2_3CS_set1_inp.txt
+add_files -tb data/tv_RCT2_3CS_set1_out_ref.txt
 
 #add_files -tb data/test_rndmSet1_inp.txt
 #add_files -tb data/test_rndmSet1_out_ref.txt
