@@ -217,6 +217,7 @@ bool getClustersIn3x4Region(uint16_t crystalsIn3x4Region[3][4][5][5],
    }
 
    // Merge neighboring split-clusters here
+   int iCluster=0;
    for(int tEta = 0; tEta < 3; tEta++) {
 #pragma HLS UNROLL    
       for(int tPhi = 0; tPhi < 4; tPhi++) {
@@ -224,23 +225,24 @@ bool getClustersIn3x4Region(uint16_t crystalsIn3x4Region[3][4][5][5],
 
 	 int ntEta = -1;
 	 int ntPhi = -1;
-	 if(peakEta_[tEta][tPhi] == 0 && tEta != 0){
+	 if(peakEta_[tEta][tPhi] == 0 && tEta != 0 && peakEta_[tEta-1][tPhi]==4 ){
 	    ntEta = tEta - 1;
 	    ntPhi = tPhi;
 	 }
-	 if(peakEta_[tEta][tPhi] == 4 && tEta != 2){
+	 if(peakEta_[tEta][tPhi] == 4 && tEta != 2 && peakEta_[tEta+1][tPhi]==0){
 	    ntEta = tEta + 1;
 	    ntPhi = tPhi;
 	 }
 
-	 if(peakPhi_[tEta][tPhi] == 0 && tPhi != 0) {
+	 if(peakPhi_[tEta][tPhi] == 0 && tPhi != 0 && peakPhi_[tEta][tPhi-1]==4) {
 	    ntPhi = tPhi - 1;
 	    ntEta = tEta;
 	 }
-	 if(peakPhi_[tEta][tPhi] == 4 && tPhi != 3){
+	 if(peakPhi_[tEta][tPhi] == 4 && tPhi != 3 && peakPhi_[tEta][tPhi+1]==0){
 	    ntPhi = tPhi + 1;
 	    ntEta = tEta;
 	 }
+
 	 if(ntEta >= 0 && ntEta < 3 && ntPhi >= 0 && ntPhi < 4){
 	    if(!mergeClusters(
 		     peakEta_[tEta][tPhi],
@@ -260,17 +262,10 @@ bool getClustersIn3x4Region(uint16_t crystalsIn3x4Region[3][4][5][5],
 		     &mergedTowerET_[ntEta][ntPhi],
 		     &mergedClusterET_[ntEta][ntPhi])
 	      )
+
 	       return false;
 	 }
-      }
-   }
 
-
-   int iCluster=0;
-   for(int tEta = 0; tEta < 3; tEta++) {
-#pragma HLS UNROLL
-      for(int tPhi = 0; tPhi < 4; tPhi++) {
-#pragma HLS UNROLL
 	 toSortClusterIn3x4_peakEta[iCluster]  = mergedPeakEta_[tEta][tPhi];
 	 toSortClusterIn3x4_peakPhi[iCluster]  = mergedPeakPhi_[tEta][tPhi];
 	 toSortClusterIn3x4_towerEta[iCluster] = tEta;
@@ -282,37 +277,37 @@ bool getClustersIn3x4Region(uint16_t crystalsIn3x4Region[3][4][5][5],
    }
 
 
-//--   uint16_t xx;
-//--
-//--   for(int i=0;i<16;i=i+4){   
-//--#pragma HLS unroll
-//--      if(toSortClusterIn3x4_ET[i]<toSortClusterIn3x4_ET[i+1]){
-//--	 xx=toSortClusterIn3x4_ET[i+1];
-//--	 toSortClusterIn3x4_ET[i+1]=toSortClusterIn3x4_ET[i];
-//--	 toSortClusterIn3x4_ET[i]=xx;
-//--	 xx=toSortClusterIn3x4_peakEta[i];
-//--	 toSortClusterIn3x4_peakEta[i]=toSortClusterIn3x4_peakEta[i+1];
-//--	 toSortClusterIn3x4_peakEta[i+1]=xx;
-//--	 xx=toSortClusterIn3x4_peakPhi[i];
-//--	 toSortClusterIn3x4_peakPhi[i]=toSortClusterIn3x4_peakPhi[i+1];
-//--	 toSortClusterIn3x4_peakPhi[i+1]=xx;
-//--      }
-//--
-//--      if(toSortClusterIn3x4_ET[i+2]>toSortClusterIn3x4_ET[i+3]){
-//--	 xx=toSortClusterIn3x4_ET[i+3];
-//--	 toSortClusterIn3x4_ET[i+3]=toSortClusterIn3x4_ET[i+2];
-//--	 toSortClusterIn3x4_ET[i+2]=xx;
-//--	 xx=toSortClusterIn3x4_peakEta[i+2];
-//--	 toSortClusterIn3x4_peakEta[i+2]=toSortClusterIn3x4_peakEta[i+3];
-//--	 toSortClusterIn3x4_peakEta[i+3]=xx;
-//--	 xx=toSortClusterIn3x4_peakPhi[i+2];
-//--	 toSortClusterIn3x4_peakPhi[i+2]=toSortClusterIn3x4_peakPhi[i+3];
-//--	 toSortClusterIn3x4_peakPhi[i+3]=xx;
-//--      }
-//--   }
-//--
-//--   // passing control to second level of quaternary comparators                                                                                                                     
-//--   bitonic_1_4(toSortClusterIn3x4_ET,toSortClusterIn3x4_peakEta,toSortClusterIn3x4_peakPhi);
+   //--   uint16_t xx;
+   //--
+   //--   for(int i=0;i<16;i=i+4){   
+   //--#pragma HLS unroll
+   //--      if(toSortClusterIn3x4_ET[i]<toSortClusterIn3x4_ET[i+1]){
+   //--	 xx=toSortClusterIn3x4_ET[i+1];
+   //--	 toSortClusterIn3x4_ET[i+1]=toSortClusterIn3x4_ET[i];
+   //--	 toSortClusterIn3x4_ET[i]=xx;
+   //--	 xx=toSortClusterIn3x4_peakEta[i];
+   //--	 toSortClusterIn3x4_peakEta[i]=toSortClusterIn3x4_peakEta[i+1];
+   //--	 toSortClusterIn3x4_peakEta[i+1]=xx;
+   //--	 xx=toSortClusterIn3x4_peakPhi[i];
+   //--	 toSortClusterIn3x4_peakPhi[i]=toSortClusterIn3x4_peakPhi[i+1];
+   //--	 toSortClusterIn3x4_peakPhi[i+1]=xx;
+   //--      }
+   //--
+   //--      if(toSortClusterIn3x4_ET[i+2]>toSortClusterIn3x4_ET[i+3]){
+   //--	 xx=toSortClusterIn3x4_ET[i+3];
+   //--	 toSortClusterIn3x4_ET[i+3]=toSortClusterIn3x4_ET[i+2];
+   //--	 toSortClusterIn3x4_ET[i+2]=xx;
+   //--	 xx=toSortClusterIn3x4_peakEta[i+2];
+   //--	 toSortClusterIn3x4_peakEta[i+2]=toSortClusterIn3x4_peakEta[i+3];
+   //--	 toSortClusterIn3x4_peakEta[i+3]=xx;
+   //--	 xx=toSortClusterIn3x4_peakPhi[i+2];
+   //--	 toSortClusterIn3x4_peakPhi[i+2]=toSortClusterIn3x4_peakPhi[i+3];
+   //--	 toSortClusterIn3x4_peakPhi[i+3]=xx;
+   //--      }
+   //--   }
+   //--
+   //--   // passing control to second level of quaternary comparators                                                                                                                     
+   //--   bitonic_1_4(toSortClusterIn3x4_ET,toSortClusterIn3x4_peakEta,toSortClusterIn3x4_peakPhi);
 
    for(int iSort=0; iSort<NClustersPer3x4Region; iSort++){
       sortedClusterIn3x4_ET[iSort]      =toSortClusterIn3x4_ET[iSort]; 
@@ -512,36 +507,36 @@ bool getClustersInCard(
       }
    }
 
-//   uint16_t xx;
-//   for(int ii=0; ii<16; ii=ii+4){
-//#pragma HLS unroll 
-//      if(toSort_ET[ii] < toSort_ET[ii+1]){
-//	 xx=toSort_ET[ii+1];
-//	 toSort_ET[ii+1]=toSort_ET[ii];
-//	 toSort_ET[ii]=xx;
-//	 xx=toSort_peakEta[ii];
-//	 toSort_peakEta[ii]=toSort_peakEta[ii+1];
-//	 toSort_peakEta[ii+1]=xx;
-//	 xx=toSort_peakPhi[ii];
-//	 toSort_peakPhi[ii]=toSort_peakPhi[ii+1];
-//	 toSort_peakPhi[ii+1]=xx;
-//      }
-//
-//      if(toSort_ET[ii+2]>toSort_ET[ii+3])
-//      {xx=toSort_ET[ii+3];
-//	 toSort_ET[ii+3]=toSort_ET[ii+2];
-//	 toSort_ET[ii+2]=xx;
-//	 xx=toSort_peakEta[ii+2];
-//	 toSort_peakEta[ii+2]=toSort_peakEta[ii+3];
-//	 toSort_peakEta[ii+3]=xx;
-//	 xx=toSort_peakPhi[ii+2];
-//	 toSort_peakPhi[ii+2]=toSort_peakPhi[ii+3];
-//	 toSort_peakPhi[ii+3]=xx;
-//      }    
-//   }        
-//   // passing control to second level of quaternary comparators
-//   bitonic_1_4(toSort_ET,toSort_peakEta,toSort_peakPhi);
-//   //Sorting ends, assigning sorted clusters to final set of variables.
+   //   uint16_t xx;
+   //   for(int ii=0; ii<16; ii=ii+4){
+   //#pragma HLS unroll 
+   //      if(toSort_ET[ii] < toSort_ET[ii+1]){
+   //	 xx=toSort_ET[ii+1];
+   //	 toSort_ET[ii+1]=toSort_ET[ii];
+   //	 toSort_ET[ii]=xx;
+   //	 xx=toSort_peakEta[ii];
+   //	 toSort_peakEta[ii]=toSort_peakEta[ii+1];
+   //	 toSort_peakEta[ii+1]=xx;
+   //	 xx=toSort_peakPhi[ii];
+   //	 toSort_peakPhi[ii]=toSort_peakPhi[ii+1];
+   //	 toSort_peakPhi[ii+1]=xx;
+   //      }
+   //
+   //      if(toSort_ET[ii+2]>toSort_ET[ii+3])
+   //      {xx=toSort_ET[ii+3];
+   //	 toSort_ET[ii+3]=toSort_ET[ii+2];
+   //	 toSort_ET[ii+2]=xx;
+   //	 xx=toSort_peakEta[ii+2];
+   //	 toSort_peakEta[ii+2]=toSort_peakEta[ii+3];
+   //	 toSort_peakEta[ii+3]=xx;
+   //	 xx=toSort_peakPhi[ii+2];
+   //	 toSort_peakPhi[ii+2]=toSort_peakPhi[ii+3];
+   //	 toSort_peakPhi[ii+3]=xx;
+   //      }    
+   //   }        
+   //   // passing control to second level of quaternary comparators
+   //   bitonic_1_4(toSort_ET,toSort_peakEta,toSort_peakPhi);
+   //   //Sorting ends, assigning sorted clusters to final set of variables.
 
 
    for(int kk=0; kk<10; kk++){ // kk<NClustersPerCard : For now sending 10 only
