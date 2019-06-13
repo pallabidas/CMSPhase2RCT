@@ -266,13 +266,26 @@ bool getClustersIn3x4Region(uint16_t crystalsIn3x4Region[3][4][5][5],
 	       return false;
 	 }
 
-	 toSortClusterIn3x4_peakEta[iCluster]  = mergedPeakEta_[tEta][tPhi];
-	 toSortClusterIn3x4_peakPhi[iCluster]  = mergedPeakPhi_[tEta][tPhi];
-	 toSortClusterIn3x4_towerEta[iCluster] = tEta;
-	 toSortClusterIn3x4_towerPhi[iCluster] = tPhi;
-	 toSortClusterIn3x4_towerET[iCluster]  = mergedTowerET_[tEta][tPhi];
-	 toSortClusterIn3x4_ET[iCluster]       = mergedClusterET_[tEta][tPhi];
-	 iCluster++;
+//	 cout<<" ---> ET="<<mergedClusterET_[tEta][tPhi]
+//	     <<   " pEta="<<mergedPeakEta_[tEta][tPhi]
+//	     <<   " pPhi="<<mergedPeakPhi_[tEta][tPhi]
+//	     <<   " tEta="<<tEta
+//	     <<   " tPhi="<<tPhi
+//	     <<   "     ET="<<mergedClusterET_[tEta][tPhi]
+//	     <<std::endl;
+
+	 // if condition is implemented to discard the towers with no hits. 
+	 // This is not needed when sorting is done.
+	 if(!(mergedPeakEta_[tEta][tPhi]==0 && mergedPeakPhi_[tEta][tPhi]==0 && mergedClusterET_[tEta][tPhi]==0) ){
+	    
+	    toSortClusterIn3x4_peakEta[iCluster]  = mergedPeakEta_[tEta][tPhi];
+	    toSortClusterIn3x4_peakPhi[iCluster]  = mergedPeakPhi_[tEta][tPhi];
+	    toSortClusterIn3x4_towerEta[iCluster] = tEta;
+	    toSortClusterIn3x4_towerPhi[iCluster] = tPhi;
+	    toSortClusterIn3x4_towerET[iCluster]  = mergedTowerET_[tEta][tPhi];
+	    toSortClusterIn3x4_ET[iCluster]       = mergedClusterET_[tEta][tPhi];
+	    iCluster++;
+	 }
       }
    }
 
