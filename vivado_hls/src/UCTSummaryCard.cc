@@ -27,8 +27,8 @@ void UCTSummaryCard(
 	ap_uint<10> et_jet_cntr[216];
 	ap_uint<10> et_jet_fwd[252];
 	ap_uint<10> et_jet_boosted[252];
-	ap_uint<3>  rEta_jet_boosted[252];
-	ap_uint<3>  rPhi_jet_boosted[252];
+	bitset<3>  rEta_jet_boosted[252];
+	bitset<3>  rPhi_jet_boosted[252];
 
 	ap_uint<10> nonIso_egamma_et[252];
 	ap_uint<10> Iso_egamma_et[252];
@@ -429,19 +429,19 @@ void UCTSummaryCard(
 			algo_outputs.jet_boosted[idx].et = so_out_jet_boosted[idx].et;
 			idx_srt = so_out_jet_boosted[idx].idx;
 			
-			side = calo_coor_full[idx_srt].side;
+			side = calo_coor[idx_srt].side;
 			algo_outputs.jet_boosted[idx].side = side;
 	
-			algo_outputs.jet_boosted[idx].iphi = calo_coor_full[idx_srt].iphi
+			algo_outputs.jet_boosted[idx].iphi = calo_coor[idx_srt].iphi
 					+ so_out_jet_boosted[idx].rloc_phi;
 
 			if (side == 1)
 				algo_outputs.jet_boosted[idx].ieta =
-						calo_coor_full[idx_srt].ieta
+						calo_coor[idx_srt].ieta
 								- so_out_jet_boosted[idx].rloc_eta;
 			else
 				algo_outputs.jet_boosted[idx].ieta =
-						calo_coor_full[idx_srt].ieta
+						calo_coor[idx_srt].ieta
 								+ so_out_jet_boosted[idx].rloc_eta;
 
 			algo_outputs.jet_boosted[idx].rEta = rEta_jet_boosted[idx_srt];

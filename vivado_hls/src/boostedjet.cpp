@@ -2,13 +2,15 @@
 #include "ap_int.h"
 #include "UCTSummaryCard.hpp"
 #include "region_neighbors.h"
+#include <bitset>
+using std::bitset;
 
-ap_uint<3> etapattern(bool activeRegion[9])
+bitset<3> etapattern(bool activeRegion[9])
 {
 #pragma HLS PIPELINE II=6
 #pragma HLS ARRAY_RESHAPE  variable=activeRegion complete  dim=1
 
-	ap_uint<3> rEta;
+	bitset<3> rEta;
 	for(int iEta = 0; iEta < 3; iEta++){
 #pragma HLS UNROLL
 		bool activeStrip = false;
@@ -21,12 +23,12 @@ ap_uint<3> etapattern(bool activeRegion[9])
 	return rEta;
 }
 
-ap_uint<3> phipattern(bool activeRegion[9])
+bitset<3> phipattern(bool activeRegion[9])
 {
 #pragma HLS PIPELINE II=6
 #pragma HLS ARRAY_RESHAPE  variable=activeRegion complete  dim=1
 
-	ap_uint<3> rPhi;
+	bitset<3> rPhi;
 	for(int iPhi = 0; iPhi < 3; iPhi++){
 #pragma HLS UNROLL
 		bool activeStrip = false;
@@ -41,11 +43,10 @@ ap_uint<3> phipattern(bool activeRegion[9])
 
 void boostedjet(ap_uint<10> jet_seed,             // input
 			  region_t regions[NR_CNTR_REG],
-			  //ap_uint<10> et_rgn [NR_CNTR_REG], // input 26x18
 			  ap_uint<10> et_3by3[NR_CNTR_REG], // input 26x18
 			  ap_uint<10> et_jet [NR_CNTR_REG], // *output* 26x18
-			  ap_uint<3> rEta_jet [NR_CNTR_REG],
-			  ap_uint<3> rPhi_jet [NR_CNTR_REG])
+			  bitset<3> rEta_jet [NR_CNTR_REG],
+			  bitset<3> rPhi_jet [NR_CNTR_REG])
  
 {
 
@@ -178,23 +179,23 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 			// assign et_jet and pattern
 			if (jet_veto[idx] == false){
 				et_jet[idx] = et_3by3[idx];
-				if (tauveto_C && et_C > (et_jet[idx] >> 4)) activeRegion[4] = true;
+				if (!tauveto_C && et_C > (et_jet[idx] >> 4)) activeRegion[4] = true;
 				else activeRegion[4] = false;
-				if (tauveto_N && et_N > (et_jet[idx] >> 4)) activeRegion[3] = true;
+				if (!tauveto_N && et_N > (et_jet[idx] >> 4)) activeRegion[3] = true;
 				else activeRegion[3] = false;
-				if (tauveto_E && et_E > (et_jet[idx] >> 4)) activeRegion[1] = true;
+				if (!tauveto_E && et_E > (et_jet[idx] >> 4)) activeRegion[1] = true;
 				else activeRegion[1] = false;
-				if (tauveto_W && et_W > (et_jet[idx] >> 4)) activeRegion[7] = true;
+				if (!tauveto_W && et_W > (et_jet[idx] >> 4)) activeRegion[7] = true;
 				else activeRegion[7] = false;
-				if (tauveto_S && et_S > (et_jet[idx] >> 4)) activeRegion[5] = true;
+				if (!tauveto_S && et_S > (et_jet[idx] >> 4)) activeRegion[5] = true;
 				else activeRegion[5] = false;
-				if (tauveto_NW && et_NW > (et_jet[idx] >> 4)) activeRegion[6] = true;
+				if (!tauveto_NW && et_NW > (et_jet[idx] >> 4)) activeRegion[6] = true;
 				else activeRegion[6] = false;
-				if (tauveto_NE && et_NE > (et_jet[idx] >> 4)) activeRegion[0] = true;
+				if (!tauveto_NE && et_NE > (et_jet[idx] >> 4)) activeRegion[0] = true;
 				else activeRegion[0] = false;
-				if (tauveto_SW && et_SW > (et_jet[idx] >> 4)) activeRegion[8] = true;
+				if (!tauveto_SW && et_SW > (et_jet[idx] >> 4)) activeRegion[8] = true;
 				else activeRegion[8] = false;
-				if (tauveto_SE && et_SE > (et_jet[idx] >> 4)) activeRegion[2] = true;
+				if (!tauveto_SE && et_SE > (et_jet[idx] >> 4)) activeRegion[2] = true;
 				else activeRegion[2] = false;
 				rEta_jet[idx] = etapattern(activeRegion);
 				rPhi_jet[idx] = phipattern(activeRegion);			
@@ -205,51 +206,5 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 				rPhi_jet[idx] = 0;
 			}
 		}
-
-//		rEta_jet[idx] = 0;
-//		rPhi_jet[idx] = 0;
-//
-//		if (regions[rgn_nghbr[idx].nb_C].tau_veto == true && et_C > (et_jet[idx] >> 4)) activeRegion[4] = true;
-//		else activeRegion[4] = false;
-//		if (regions[rgn_nghbr[idx].nb_N].tau_veto == true && et_N > (et_jet[idx] >> 4)) activeRegion[3] = true;
-//		else activeRegion[3] = false;
-//		if (regions[rgn_nghbr[idx].nb_E].tau_veto == true && et_E > (et_jet[idx] >> 4)) activeRegion[1] = true;
-//		else activeRegion[1] = false;
-//		if (regions[rgn_nghbr[idx].nb_W].tau_veto == true && et_W > (et_jet[idx] >> 4)) activeRegion[7] = true;
-//		else activeRegion[7] = false;
-//		if (regions[rgn_nghbr[idx].nb_S].tau_veto == true && et_S > (et_jet[idx] >> 4)) activeRegion[5] = true;
-//		else activeRegion[5] = false;
-//		if (regions[rgn_nghbr[idx].nb_NW].tau_veto == true && et_NW > (et_jet[idx] >> 4)) activeRegion[6] = true;
-//		else activeRegion[6] = false;
-//		if (regions[rgn_nghbr[idx].nb_NE].tau_veto == true && et_NE > (et_jet[idx] >> 4)) activeRegion[0] = true;
-//		else activeRegion[0] = false;
-//		if (regions[rgn_nghbr[idx].nb_SW].tau_veto == true && et_SW > (et_jet[idx] >> 4)) activeRegion[8] = true;
-//		else activeRegion[8] = false;
-//		if (regions[rgn_nghbr[idx].nb_SE].tau_veto == true && et_SE > (et_jet[idx] >> 4)) activeRegion[2] = true;
-//		else activeRegion[2] = false;
-//
-//		rEta_jet[idx] = etapattern(activeRegion);
-//		rPhi_jet[idx] = phipattern(activeRegion);
-//
-//		for(int iEta = 0; iEta < 3; iEta++){
-//#pragma HLS UNROLL
-//			bool activeStrip = false;
-//			for(int iPhi = 0; iPhi < 3; iPhi++){
-//#pragma HLS UNROLL
-//				if(activeRegion[iEta*3+iPhi]) activeStrip = true;
-//			}
-//			if(activeStrip) rEta_jet[idx] |= (0x1 << iEta);
-//		}
-//
-//		for(int iPhi = 0; iPhi < 3; iPhi++){
-//#pragma HLS UNROLL
-//			bool activeStrip = false;
-//			for(int iEta = 0; iEta < 3; iEta++){
-//#pragma HLS UNROLL
-//				if(activeRegion[iEta*3+iPhi]) activeStrip = true;
-//			}
-//			if(activeStrip) rPhi_jet[idx] |= (0x1 << iPhi);
-//		}
-             
 	}
 }

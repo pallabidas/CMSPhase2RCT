@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 #include <ap_int.h>
+#include <bitset>
+
+using std::bitset;
 
 // Number of central regions
 #define NR_CNTR_REG (252)
@@ -55,8 +58,8 @@ typedef struct
         ap_uint<1> side;
         ap_uint<7> iphi;
         ap_uint<6> ieta;
-	ap_uint<3> rEta;
-	ap_uint<3> rPhi;
+	bitset<3> rEta;
+	bitset<3> rPhi;
 } boostedjet_out_t;
 
 typedef struct
@@ -129,6 +132,6 @@ void et_3by3(ap_uint<10> et[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG]);
 void jet(ap_uint<10> jet_seed, ap_uint<10> et[NR_CNTR_REG],
 		ap_uint<10> et_3by3[NR_CNTR_REG], ap_uint<10> jet_et[NR_CNTR_REG]);
 
-void boostedjet(ap_uint<10> jet_seed, region_t regions[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG], ap_uint<10> jet_et[NR_CNTR_REG], ap_uint<3> rEta_jet[NR_CNTR_REG], ap_uint<3> rPhi_jet[NR_CNTR_REG]);
+void boostedjet(ap_uint<10> jet_seed, region_t regions[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG], ap_uint<10> jet_et[NR_CNTR_REG], bitset<3> rEta_jet[NR_CNTR_REG], bitset<3> rPhi_jet[NR_CNTR_REG]);
 
 #endif

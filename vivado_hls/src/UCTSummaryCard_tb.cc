@@ -4,10 +4,11 @@
 #include <fstream>
 #include <string>
 #include <vector>
-
+#include <bitset>
 #include "UCTSummaryCard.hpp"
 
 using namespace std;
+using std::bitset;
 
 vector< vector<unsigned int> >  read_regions_from_file(void)
 		{
@@ -184,10 +185,10 @@ int main()
 			ap_uint<1> side = algo_outputs.jet_boosted[i].side;
 			ap_uint<7> iphi = algo_outputs.jet_boosted[i].iphi;
 			ap_uint<6> ieta = algo_outputs.jet_boosted[i].ieta;
-			ap_uint<3> rEta = algo_outputs.jet_boosted[i].rEta;
-			ap_uint<3> rPhi = algo_outputs.jet_boosted[i].rPhi;
+			bitset<3> rEta = algo_outputs.jet_boosted[i].rEta;
+			bitset<3> rPhi = algo_outputs.jet_boosted[i].rPhi;
 
-			cout << "Jet Boosted " << i << " ET: " << hex << et << dec << " Side: " << side << " iPhi: " << iphi << " iEta: " << ieta << " rEta: " << rEta << " rPhi: " << rPhi << endl;
+			cout << "Jet Boosted " << i << " ET: " << hex << et << dec << " Side: " << side << " iPhi: " << iphi << " iEta: " << ieta << " rEta: " << rEta.to_string() << " rPhi: " << rPhi.to_string() << endl;
 
 		}
 
