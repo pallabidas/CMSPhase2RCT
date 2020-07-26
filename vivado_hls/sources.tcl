@@ -1,35 +1,17 @@
 ## Set the top level module
-set_top algo_unpacked
+set_top UCTSummaryCard
 ##
-#### Add source code
-add_files src/algo_unpacked.cpp
-add_files src/ClusterFinder.cc
-add_files src/bitonicSorter.cc
-#
-### Add testbed files
-add_files -tb src/algo_unpacked_tb.cpp 
+## Add source code
+add_files src/UCTSummaryCard.cc
+add_files src/adder_tree.cpp
+add_files src/am_sort_256x8.cpp
+add_files src/egamma.cpp
+add_files src/tau.cpp
+add_files src/jet.cpp
+add_files src/et_3by3.cpp
+add_files src/PU_LUT.cpp
+##
+## Add testbench files
+add_files -tb src/data.txt
+add_files -tb src/UCTSummaryCard_tb.cc
 
-### Add test input files
-#add_files -tb data/test1_inp.txt
-#add_files -tb data/test1_out_ref.txt
-#
-#add_files -tb data/rnd_inp.txt
-#add_files -tb data/rnd_out_ref.txt
-#
-#add_files -tb data/test_random_inp.txt
-#add_files -tb data/test_random_out_ref.txt
-
-add_files -tb data/test_random_set2_inp.txt
-add_files -tb data/test_random_set2_out_ref.txt
-
-add_files -tb data/tv_RCT1_3CS_set1_inp.txt
-add_files -tb data/tv_RCT1_3CS_set1_out_ref.txt
-
-add_files -tb data/tv_RCT2_3CS_set1_inp.txt
-add_files -tb data/tv_RCT2_3CS_set1_out_ref.txt
-
-#add_files -tb data/test_rndmSet1_inp.txt
-#add_files -tb data/test_rndmSet1_out_ref.txt
-#
-#add_files -tb data/test_rndm_inp.txt
-#add_files -tb data/test_rndm_out_ref.txt
