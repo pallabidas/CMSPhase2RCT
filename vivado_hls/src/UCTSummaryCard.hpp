@@ -15,6 +15,7 @@
 
 #define N_CENTRAL_JETS 8
 #define N_FWD_JETS 8
+#define N_BOOSTED_JETS 8
 #define N_NONISO_EGAMMAS 8
 #define N_ISO_EGAMMAS 8
 #define N_NONISO_TAUS 8
@@ -49,6 +50,16 @@ typedef struct
 } jet_out_t;
 
 typedef struct
+{       
+        ap_uint<11> et;
+        ap_uint<1> side;
+        ap_uint<7> iphi;
+        ap_uint<6> ieta;
+	ap_uint<3> rEta;
+	ap_uint<3> rPhi;
+} boostedjet_out_t;
+
+typedef struct
 {
 	ap_uint<9> et;
 	ap_uint<1> side;
@@ -73,6 +84,7 @@ typedef struct
 
 	jet_out_t jet_central[N_CENTRAL_JETS];
 	jet_out_t jet_forward[N_FWD_JETS];
+	boostedjet_out_t jet_boosted[N_BOOSTED_JETS];
 
 	eg_out_t eg_noniso[N_NONISO_EGAMMAS];
 	eg_out_t eg_iso[N_ISO_EGAMMAS];
@@ -116,5 +128,7 @@ void et_3by3(ap_uint<10> et[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG]);
 
 void jet(ap_uint<10> jet_seed, ap_uint<10> et[NR_CNTR_REG],
 		ap_uint<10> et_3by3[NR_CNTR_REG], ap_uint<10> jet_et[NR_CNTR_REG]);
+
+void boostedjet(ap_uint<10> jet_seed, region_t regions[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG], ap_uint<10> jet_et[NR_CNTR_REG], ap_uint<3> rEta_jet[NR_CNTR_REG], ap_uint<3> rPhi_jet[NR_CNTR_REG]);
 
 #endif

@@ -26,6 +26,9 @@ void UCTSummaryCard(
 	ap_uint<10> et_3by3_cntr[252];
 	ap_uint<10> et_jet_cntr[216];
 	ap_uint<10> et_jet_fwd[252];
+	ap_uint<10> et_jet_boosted[252];
+	ap_uint<3>  rEta_jet_boosted[252];
+	ap_uint<3>  rPhi_jet_boosted[252];
 
 	ap_uint<10> nonIso_egamma_et[252];
 	ap_uint<10> Iso_egamma_et[252];
@@ -40,6 +43,9 @@ void UCTSummaryCard(
 
 	t_so so_in_jet_fwd[256];
 	t_so so_out_jet_fwd[8];
+
+	t_so so_in_jet_boosted[256];
+	t_so so_out_jet_boosted[8];
 
 	t_so so_in_tau_noniso[256];
 	t_so so_out_tau_noniso[8];
@@ -77,6 +83,7 @@ void UCTSummaryCard(
 
 #pragma HLS ARRAY_RESHAPE variable=algo_outputs.jet_central complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=algo_outputs.jet_forward complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=algo_outputs.jet_boosted complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=algo_outputs.eg_noniso complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=algo_outputs.eg_iso complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=algo_outputs.tau_noniso complete dim=1
@@ -86,6 +93,8 @@ void UCTSummaryCard(
 #pragma HLS ARRAY_RESHAPE variable=so_out_jet_cr complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_in_jet_fwd complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_out_jet_fwd complete dim=0
+#pragma HLS ARRAY_RESHAPE variable=so_in_jet_boosted complete dim=0
+#pragma HLS ARRAY_RESHAPE variable=so_out_jet_boosted complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_in_tau_noniso complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_out_tau_noniso complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_in_tau_iso complete dim=0
@@ -102,6 +111,10 @@ void UCTSummaryCard(
 #pragma HLS ARRAY_RESHAPE variable=et_jet_fwd complete dim=0
 
 #pragma HLS ARRAY_RESHAPE variable=et_jet_calo complete dim=0
+
+#pragma HLS ARRAY_RESHAPE variable=et_jet_boosted complete dim=0
+#pragma HLS ARRAY_RESHAPE variable=rEta_jet_boosted complete dim=0
+#pragma HLS ARRAY_RESHAPE variable=rPhi_jet_boosted complete dim=0
 
 #pragma HLS ARRAY_RESHAPE variable=nonIso_egamma_et complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=Iso_egamma_et complete dim=0
@@ -199,8 +212,7 @@ void UCTSummaryCard(
 			if (reg > 5 && reg < 20)
 			{
 				et_3by3_cntr[phi * 14 + reg - 6] = et_3by3_calo[phi * 26 + reg];
-				centr_region_pu_sub[phi * 14 + reg - 6].et = pu_sub_et_calo[phi
-						* 26 + reg];
+				centr_region_pu_sub[phi * 14 + reg - 6].et = pu_sub_et_calo[phi	* 26 + reg];
 			}
 		}
 	}
@@ -208,6 +220,8 @@ void UCTSummaryCard(
 
 	// Jet algorithm
 	jet(algo_config.jet_seed, pu_sub_et_calo, et_3by3_calo, et_jet_calo);
+	//boostedjet(algo_config.jet_seed, calo_regions, pu_sub_et_calo, et_3by3_calo, et_jet_boosted, rEta_jet_boosted, rPhi_jet_boosted);
+	boostedjet(algo_config.jet_seed, centr_region_pu_sub, et_3by3_cntr, et_jet_boosted, rEta_jet_boosted, rPhi_jet_boosted);
 
 	// e-gamma algorithm
 	egamma(algo_config.egamma_seed, algo_config.egamma_IsoFact,
@@ -255,6 +269,11 @@ void UCTSummaryCard(
 				so_in_jet_cr[idx_out].idx = idx_in;
 				so_in_jet_cr[idx_out].rloc_phi = calo_regions[idx_in].rloc_phi;
 				so_in_jet_cr[idx_out].rloc_eta = calo_regions[idx_in].rloc_eta;
+
+				//so_in_jet_boosted[idx_out].et = et_jet_boosted[idx_in];
+				//so_in_jet_boosted[idx_out].idx = idx_in;
+				//so_in_jet_boosted[idx_out].rloc_phi = rEta_jet_boosted[idx_in];
+				//so_in_jet_boosted[idx_out].rloc_eta = rPhi_jet_boosted[idx_in];
 			}
 		}
 	}
@@ -278,6 +297,10 @@ void UCTSummaryCard(
 		so_in_jet_cr[idx].rloc_phi = 0;
 		so_in_jet_cr[idx].rloc_eta = 0;
 
+		//so_in_jet_boosted[idx].et = 0;
+		//so_in_jet_boosted[idx].idx = 0;
+		//so_in_jet_boosted[idx].rloc_phi = 0;
+		//so_in_jet_boosted[idx].rloc_eta = 0;
 	}
 
 	for (int idx = 0; idx < 252; idx++)
@@ -303,6 +326,12 @@ void UCTSummaryCard(
 		so_in_tau_iso[idx].idx = idx;
 		so_in_tau_iso[idx].rloc_phi = centr_region[idx].rloc_phi;
 		so_in_tau_iso[idx].rloc_eta = centr_region[idx].rloc_eta;
+                         
+		so_in_jet_boosted[idx].et = et_jet_boosted[idx];
+		so_in_jet_boosted[idx].idx = idx;
+		so_in_jet_boosted[idx].rloc_phi = centr_region[idx].rloc_phi;
+		so_in_jet_boosted[idx].rloc_eta = centr_region[idx].rloc_eta;
+
 	}
 
 	for (int idx = 252; idx < 256; idx++)
@@ -328,12 +357,18 @@ void UCTSummaryCard(
 		so_in_tau_iso[idx].idx = 0;
 		so_in_tau_iso[idx].rloc_phi = 0;
 		so_in_tau_iso[idx].rloc_eta = 0;
+
+		so_in_jet_boosted[idx].et = 0;
+		so_in_jet_boosted[idx].idx = 0;
+		so_in_jet_boosted[idx].rloc_phi = 0;
+		so_in_jet_boosted[idx].rloc_eta = 0;
 	}
 
 ////////////////////////////////////////////////////////////
 // Do the actual sorting
 	am_sort_256x8(so_in_jet_cr, so_out_jet_cr);
 	am_sort_256x8(so_in_jet_fwd, so_out_jet_fwd);
+	am_sort_256x8(so_in_jet_boosted, so_out_jet_boosted);
 
 	am_sort_256x8(so_in_eg_noniso, so_out_eg_noniso);
 	am_sort_256x8(so_in_eg_iso, so_out_eg_iso);
@@ -389,6 +424,31 @@ void UCTSummaryCard(
 						calo_coor_full[idx_srt].ieta
 								+ so_out_jet_fwd[idx].rloc_eta;
 		}
+		
+		{ // Boosted jets
+			algo_outputs.jet_boosted[idx].et = so_out_jet_boosted[idx].et;
+			idx_srt = so_out_jet_boosted[idx].idx;
+			
+			side = calo_coor_full[idx_srt].side;
+			algo_outputs.jet_boosted[idx].side = side;
+	
+			algo_outputs.jet_boosted[idx].iphi = calo_coor_full[idx_srt].iphi
+					+ so_out_jet_boosted[idx].rloc_phi;
+
+			if (side == 1)
+				algo_outputs.jet_boosted[idx].ieta =
+						calo_coor_full[idx_srt].ieta
+								- so_out_jet_boosted[idx].rloc_eta;
+			else
+				algo_outputs.jet_boosted[idx].ieta =
+						calo_coor_full[idx_srt].ieta
+								+ so_out_jet_boosted[idx].rloc_eta;
+
+			algo_outputs.jet_boosted[idx].rEta = rEta_jet_boosted[idx_srt];
+			algo_outputs.jet_boosted[idx].rPhi = rPhi_jet_boosted[idx_srt];
+
+		}
+
 		{ // EG NonIso
 			algo_outputs.eg_noniso[idx].et = so_out_eg_noniso[idx].et;
 			idx_srt = so_out_eg_noniso[idx].idx;
