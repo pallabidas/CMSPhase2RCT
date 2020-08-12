@@ -179,23 +179,23 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 			// assign et_jet and pattern
 			if (jet_veto[idx] == false){
 				et_jet[idx] = et_3by3[idx];
-				if (!tauveto_C && et_C > (et_jet[idx] >> 4)) activeRegion[4] = true;
+				if (!tauveto_C && et_C > 30 && et_C > (et_jet[idx] >> 4)) activeRegion[4] = true;
 				else activeRegion[4] = false;
-				if (!tauveto_N && et_N > (et_jet[idx] >> 4)) activeRegion[3] = true;
+				if (!tauveto_N && et_N > 30 && et_N > (et_jet[idx] >> 4)) activeRegion[3] = true;
 				else activeRegion[3] = false;
-				if (!tauveto_E && et_E > (et_jet[idx] >> 4)) activeRegion[1] = true;
+				if (!tauveto_E && et_E > 30 && et_E > (et_jet[idx] >> 4)) activeRegion[1] = true;
 				else activeRegion[1] = false;
-				if (!tauveto_W && et_W > (et_jet[idx] >> 4)) activeRegion[7] = true;
+				if (!tauveto_W && et_W > 30 && et_W > (et_jet[idx] >> 4)) activeRegion[7] = true;
 				else activeRegion[7] = false;
-				if (!tauveto_S && et_S > (et_jet[idx] >> 4)) activeRegion[5] = true;
+				if (!tauveto_S && et_S > 30 && et_S > (et_jet[idx] >> 4)) activeRegion[5] = true;
 				else activeRegion[5] = false;
-				if (!tauveto_NW && et_NW > (et_jet[idx] >> 4)) activeRegion[6] = true;
+				if (!tauveto_NW && et_NW > 30 && et_NW > (et_jet[idx] >> 4)) activeRegion[6] = true;
 				else activeRegion[6] = false;
-				if (!tauveto_NE && et_NE > (et_jet[idx] >> 4)) activeRegion[0] = true;
+				if (!tauveto_NE && et_NE > 30 && et_NE > (et_jet[idx] >> 4)) activeRegion[0] = true;
 				else activeRegion[0] = false;
-				if (!tauveto_SW && et_SW > (et_jet[idx] >> 4)) activeRegion[8] = true;
+				if (!tauveto_SW && et_SW > 30 && et_SW > (et_jet[idx] >> 4)) activeRegion[8] = true;
 				else activeRegion[8] = false;
-				if (!tauveto_SE && et_SE > (et_jet[idx] >> 4)) activeRegion[2] = true;
+				if (!tauveto_SE && et_SE > 30 && et_SE > (et_jet[idx] >> 4)) activeRegion[2] = true;
 				else activeRegion[2] = false;
 				rEta_jet[idx] = etapattern(activeRegion);
 				rPhi_jet[idx] = phipattern(activeRegion);			
