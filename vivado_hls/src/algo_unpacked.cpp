@@ -39,7 +39,7 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 // !!! Retain these 4 #pragma directives below in your algo_unpacked implementation !!!
 #pragma HLS ARRAY_PARTITION variable=link_in complete dim=0
 #pragma HLS ARRAY_PARTITION variable=link_out complete dim=0
-#pragma HLS PIPELINE II=3
+#pragma HLS PIPELINE II=6
 #pragma HLS INTERFACE ap_ctrl_hs port=return
 
 	ap_uint<192> tmp_link_out[N_CH_OUT];
@@ -163,8 +163,6 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 ///////////////////////////////////////////////////////////
 
 #pragma HLS INTERFACE ap_none port=algo_config
-
-#pragma HLS PIPELINE II=6
 
 #pragma HLS ARRAY_RESHAPE variable=centr_region complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=fwd_region complete dim=1
