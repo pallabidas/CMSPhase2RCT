@@ -220,7 +220,6 @@ void UCTSummaryCard(
 
 	// Jet algorithm
 	jet(algo_config.jet_seed, pu_sub_et_calo, et_3by3_calo, et_jet_calo);
-	//boostedjet(algo_config.jet_seed, calo_regions, pu_sub_et_calo, et_3by3_calo, et_jet_boosted, rEta_jet_boosted, rPhi_jet_boosted);
 	boostedjet(algo_config.jet_seed, centr_region_pu_sub, et_3by3_cntr, et_jet_boosted, rEta_jet_boosted, rPhi_jet_boosted);
 
 	// e-gamma algorithm
@@ -269,11 +268,6 @@ void UCTSummaryCard(
 				so_in_jet_cr[idx_out].idx = idx_in;
 				so_in_jet_cr[idx_out].rloc_phi = calo_regions[idx_in].rloc_phi;
 				so_in_jet_cr[idx_out].rloc_eta = calo_regions[idx_in].rloc_eta;
-
-				//so_in_jet_boosted[idx_out].et = et_jet_boosted[idx_in];
-				//so_in_jet_boosted[idx_out].idx = idx_in;
-				//so_in_jet_boosted[idx_out].rloc_phi = rEta_jet_boosted[idx_in];
-				//so_in_jet_boosted[idx_out].rloc_eta = rPhi_jet_boosted[idx_in];
 			}
 		}
 	}
@@ -296,11 +290,6 @@ void UCTSummaryCard(
 		so_in_jet_cr[idx].idx = 0;
 		so_in_jet_cr[idx].rloc_phi = 0;
 		so_in_jet_cr[idx].rloc_eta = 0;
-
-		//so_in_jet_boosted[idx].et = 0;
-		//so_in_jet_boosted[idx].idx = 0;
-		//so_in_jet_boosted[idx].rloc_phi = 0;
-		//so_in_jet_boosted[idx].rloc_eta = 0;
 	}
 
 	for (int idx = 0; idx < 252; idx++)
