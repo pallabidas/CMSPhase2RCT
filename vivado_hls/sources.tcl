@@ -4,7 +4,7 @@ set_top algo_unpacked
 ##
 ## Add source code
 add_files src/algo_unpacked.cpp
-add_files src/UCTSummaryCard.cc
+#add_files src/UCTSummaryCard.cc
 add_files src/adder_tree.cpp
 add_files src/am_sort_256x8.cpp
 add_files src/egamma.cpp
