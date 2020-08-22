@@ -9,7 +9,7 @@ void tau(ap_uint<10> tau_seed, ap_ufixed<7, 1, AP_RND, AP_SAT> tau_IsoFact,
 		ap_uint<10> nonIso_tau_et[NR_CNTR_REG],
 		ap_uint<10> Iso_tau_et[NR_CNTR_REG])
 {
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 
 #pragma HLS INTERFACE ap_none port=tau_IsoFact
 #pragma HLS INTERFACE ap_none port=tau_seed

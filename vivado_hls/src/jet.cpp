@@ -12,7 +12,7 @@ void jet(ap_uint<10> jet_seed,             // input
 
 #pragma HLS INTERFACE ap_none port=jet_seed
 
-#pragma HLS PIPELINE II=6 // target clk freq = 250 MHz
+#pragma HLS PIPELINE II=3 // target clk freq = 120 MHz
 
 #pragma HLS ARRAY_RESHAPE  variable=et_rgn    complete  dim=1
 #pragma HLS ARRAY_RESHAPE  variable=et_3by3   complete  dim=1

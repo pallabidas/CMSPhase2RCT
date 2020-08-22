@@ -10,7 +10,7 @@ void egamma(ap_uint<10> egamma_seed,
 		ap_uint<10> nonIso_egamma_et[NR_CNTR_REG],
 		ap_uint<10> Iso_egamma_et[NR_CNTR_REG])
 {
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 
 #pragma HLS INTERFACE ap_none port=egamma_IsoFact
 #pragma HLS INTERFACE ap_none port=egamma_seed

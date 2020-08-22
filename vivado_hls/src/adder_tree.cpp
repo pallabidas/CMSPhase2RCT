@@ -51,7 +51,7 @@ const ap_fixed<8, 1, AP_RND, AP_SAT> cos_phi_lut[] =
 
 sums_t ener_sums(ap_uint<10> et[NR_CALO_REG], ap_uint<10> ht_thr)
 {
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 
 	sums_t sums;
 
@@ -99,7 +99,7 @@ sums_t ener_sums(ap_uint<10> et[NR_CALO_REG], ap_uint<10> ht_thr)
 // high threshold filter
 void ht_filt(ap_uint<10> ht_thr, in_t arr_i[NR_CALO_REG], in_t arr_o[NR_CALO_REG])
 {
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 
 #pragma HLS ARRAY_PARTITION variable=arr_i complete dim=1
 #pragma HLS ARRAY_PARTITION variable=arr_o complete dim=1
@@ -123,7 +123,7 @@ void ht_filt(ap_uint<10> ht_thr, in_t arr_i[NR_CALO_REG], in_t arr_o[NR_CALO_REG
 
 out_t adder_tree(in_t arr_i[NR_CALO_REG])
 {
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 
 #pragma HLS ARRAY_PARTITION variable=arr_i complete dim=1
 
@@ -148,7 +148,7 @@ out_t adder_tree(in_t arr_i[NR_CALO_REG])
 
 out2_t adder_tree_s(in2_t arr_i[NR_CALO_REG])
 {
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 
 #pragma HLS ARRAY_PARTITION variable=arr_i complete dim=1
 
@@ -176,7 +176,7 @@ out2_t adder_tree_s(in2_t arr_i[NR_CALO_REG])
 
 ap_int<16> adder_tree_s_26(ap_int<11> arr_i[26])
 {
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 
 #pragma HLS ARRAY_PARTITION variable=arr_i complete dim=1
 
@@ -195,7 +195,7 @@ ap_int<16> adder_tree_s_26(ap_int<11> arr_i[26])
 
 ap_int<20> adder_tree_s_15x18(ap_int<16> arr_i[18])
 {
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 
 #pragma HLS ARRAY_PARTITION variable=arr_i complete dim=1
 
@@ -218,7 +218,7 @@ met_cmp_t adder_tree_u_part18x26(in_t arr_i[NR_CALO_REG])
 
 	met_cmp_t met_cmp;
 
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 
 #pragma HLS ARRAY_PARTITION variable=arr_i complete dim=1
 

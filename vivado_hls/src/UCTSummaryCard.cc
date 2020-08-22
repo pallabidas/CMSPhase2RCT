@@ -74,7 +74,7 @@ void UCTSummaryCard(
 
 #pragma HLS INTERFACE ap_none port=algo_config
 
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 
 #pragma HLS ARRAY_RESHAPE variable=calo_regions complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=centr_region complete dim=1

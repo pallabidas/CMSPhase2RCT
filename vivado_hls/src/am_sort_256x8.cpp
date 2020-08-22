@@ -8,7 +8,7 @@
 void am_sort_256x8(t_so so_in[256], t_so so_out[8])
 {
 
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 
 #pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0

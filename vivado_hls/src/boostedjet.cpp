@@ -7,7 +7,7 @@ using std::bitset;
 
 bitset<3> etapattern(bool activeRegion[9])
 {
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 #pragma HLS ARRAY_RESHAPE  variable=activeRegion complete  dim=1
 
 	bitset<3> rEta;
@@ -25,7 +25,7 @@ bitset<3> etapattern(bool activeRegion[9])
 
 bitset<3> phipattern(bool activeRegion[9])
 {
-#pragma HLS PIPELINE II=6
+#pragma HLS PIPELINE II=3
 #pragma HLS ARRAY_RESHAPE  variable=activeRegion complete  dim=1
 
 	bitset<3> rPhi;
@@ -55,7 +55,7 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 
 #pragma HLS INTERFACE ap_none port=jet_seed
 
-#pragma HLS PIPELINE II=6 // target clk freq = 250 MHz
+#pragma HLS PIPELINE II=3 // target clk freq = 120 MHz
 
 #pragma HLS ARRAY_RESHAPE  variable=regions   complete  dim=1
 #pragma HLS ARRAY_RESHAPE  variable=et_3by3   complete  dim=1
