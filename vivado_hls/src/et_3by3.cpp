@@ -7,6 +7,7 @@ ap_uint<10> adder_3by3(ap_uint<10> arr_i[9])
 #pragma HLS ARRAY_RESHAPE variable=arr_i complete dim=1
 
 	ap_uint<14> tmp = 0;
+#pragma HLS resource variable=tmp core=AddSub_DSP
 
 	adder_tree_label: for (int i = 0; i < 9; i++)
 	{

@@ -15,6 +15,7 @@ void tau(ap_uint<10> tau_seed, ap_ufixed<7, 1, AP_RND, AP_SAT> tau_IsoFact,
 #pragma HLS INTERFACE ap_none port=tau_seed
 
 #pragma HLS ARRAY_RESHAPE variable=regions complete dim=1
+#pragma HLS resource variable=regions core=AddSub_DSP
 #pragma HLS ARRAY_RESHAPE variable=et_3by3 complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=nonIso_tau_et complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=Iso_tau_et complete dim=1
