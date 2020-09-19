@@ -16,7 +16,6 @@ void egamma(ap_uint<10> egamma_seed,
 #pragma HLS INTERFACE ap_none port=egamma_seed
 
 #pragma HLS ARRAY_RESHAPE variable=regions complete dim=1
-#pragma HLS resource variable=regions core=AddSub_DSP
 #pragma HLS ARRAY_RESHAPE variable=et_3by3 complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=nonIso_egamma_et complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=Iso_egamma_et complete dim=1

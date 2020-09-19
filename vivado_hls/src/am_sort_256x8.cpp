@@ -327,9 +327,9 @@ void am_sort_256x8(t_so so_in[256], t_so so_out[8])
 
 void bm16_8_plus(t_so so_in[16], t_so so_out[8])
 {
-
-#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0
+#pragma HLS PIPELINE II=1
+#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=1
 
 	t_so lvl0_0[2];
 	t_so lvl0_1[2];
@@ -414,9 +414,9 @@ void bm16_8_plus(t_so so_in[16], t_so so_out[8])
 
 void bm2_minus(t_so so_in[2], t_so so_out[2])
 {
-
-#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0
+#pragma HLS PIPELINE II=1
+#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=1
 
 	if (so_in[0].et < so_in[1].et)
 	{
@@ -434,9 +434,9 @@ void bm2_minus(t_so so_in[2], t_so so_out[2])
 
 void bm2_plus(t_so so_in[2], t_so so_out[2])
 {
-
-#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0
+#pragma HLS PIPELINE II=1
+#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=1
 
 	if (so_in[0].et < so_in[1].et)
 	{
@@ -454,9 +454,9 @@ void bm2_plus(t_so so_in[2], t_so so_out[2])
 
 void bm4_minus(t_so so_in[4], t_so so_out[4])
 {
-
-#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0
+#pragma HLS PIPELINE II=1
+#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=1
 
 	t_so lvl0_0[2];
 	t_so lvl0_1[2];
@@ -501,9 +501,9 @@ void bm4_minus(t_so so_in[4], t_so so_out[4])
 
 void bm4_plus(t_so so_in[4], t_so so_out[4])
 {
-
-#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0
+#pragma HLS PIPELINE II=1
+#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=1
 
 	t_so lvl0_0[2];
 	t_so lvl0_1[2];
@@ -547,9 +547,9 @@ void bm4_plus(t_so so_in[4], t_so so_out[4])
 
 void bm8_plus(t_so so_in[8], t_so so_out[8])
 {
-
-#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0
+#pragma HLS PIPELINE II=1
+#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=1
 
 	t_so lvl0_0[2];
 	t_so lvl0_1[2];
@@ -616,9 +616,9 @@ void bm8_plus(t_so so_in[8], t_so so_out[8])
 
 void max16(t_so so_in[16], t_so so_out[8])
 {
-
-#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0
+#pragma HLS PIPELINE II=1
+#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=1
 
 	t_so lvl0_0[2];
 	t_so lvl0_1[2];
@@ -689,9 +689,9 @@ void max16(t_so so_in[16], t_so so_out[8])
 
 void oem16_8(t_so so_in[16], t_so so_out[8])
 {
-
-#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0
+#pragma HLS PIPELINE II=1
+#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=1
 
 	t_so lvl0[16];
 
@@ -733,9 +733,9 @@ void oem16_8(t_so so_in[16], t_so so_out[8])
 
 void oem4(t_so so_in[4], t_so so_out[4])
 {
-
-#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0
+#pragma HLS PIPELINE II=1
+#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=1
 
 	t_so lvl0_0[2];
 	t_so lvl0_1[2];
@@ -772,9 +772,9 @@ void oem4(t_so so_in[4], t_so so_out[4])
 
 void oem8_f(t_so so_in[8], t_so so_out[8])
 {
-
-#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0
+#pragma HLS PIPELINE II=1
+#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=1
 
 	// Level 1
 	t_so lvl1_0_in[2];
@@ -921,9 +921,9 @@ void oem8_f(t_so so_in[8], t_so so_out[8])
 
 void oem8(t_so so_in[8], t_so so_out[8])
 {
-
-#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=0
+#pragma HLS PIPELINE II=1
+#pragma HLS ARRAY_RESHAPE variable=so_in complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=so_out complete dim=1
 
 	t_so lvl0_0[4];
 	t_so lvl0_1[4];

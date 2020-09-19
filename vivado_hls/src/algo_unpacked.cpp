@@ -635,6 +635,7 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 	}
 
 	for(int i = 0; i < N_CH_OUT; i++){
+#pragma HLS unroll
 		link_out[i] = tmp_link_out[i];
 	}
 }
