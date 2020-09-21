@@ -13,6 +13,12 @@ using std::bitset;
 #define NR_FWD_REG (216)
 // Number of calorimeter regions (central + forward)
 #define NR_CALO_REG (NR_CNTR_REG + NR_FWD_REG)
+// Number of central super-regions (2x2)
+#define NR_SCNTR_REG (63)
+// Number of forward super-regions (2x2)
+#define NR_SFWD_REG (54)
+// Number of super-regions (2x2)
+#define NR_SUPER_REG (NR_SCNTR_REG + NR_SFWD_REG)
 
 #define PUM_LEVEL_BITSIZE (9)
 
@@ -117,21 +123,34 @@ algo_outputs_t & algo_outputs
 
 ap_uint<8> popcount(ap_uint<NR_CALO_REG> bitString);
 
+void superregion_centre(ap_uint<10> et[NR_CNTR_REG], int sr_centre_index[NR_SCNTR_REG]);
+
+void superregion(ap_uint<10> et[NR_CALO_REG], int sr_index[NR_SUPER_REG]);
+
 void egamma(ap_uint<10> egamma_seed, ap_ufixed<7, 1, AP_RND, AP_SAT> egIsoFact,
-		region_t regions[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG],
+		region_t regions[NR_CNTR_REG], 
+		ap_uint<10> et_3by3[NR_CNTR_REG],
 		ap_uint<10> nonIso_egamma_et[NR_CNTR_REG],
 		ap_uint<10> Iso_egamma_et[NR_CNTR_REG]);
 
 void tau(ap_uint<10> tau_seed, ap_ufixed<7, 1, AP_RND, AP_SAT> egIsoFact,
-		region_t regions[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG],
+		region_t regions[NR_CNTR_REG], 
+		ap_uint<10> et_3by3[NR_CNTR_REG],
 		ap_uint<10> nonIso_tau_et[NR_CNTR_REG],
 		ap_uint<10> Iso_tau_et[NR_CNTR_REG]);
 
-void et_3by3(ap_uint<10> et[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG]);
+void et_3by3(ap_uint<10> et[NR_CALO_REG], ap_uint<10> et_3by3[NR_CALO_REG]);
 
-void jet(ap_uint<10> jet_seed, ap_uint<10> et[NR_CNTR_REG],
-		ap_uint<10> et_3by3[NR_CNTR_REG], ap_uint<10> jet_et[NR_CNTR_REG]);
+void jet(ap_uint<10> jet_seed, 
+		ap_uint<10> et[NR_CALO_REG],
+		ap_uint<10> et_3by3[NR_CALO_REG], 
+		ap_uint<10> jet_et[NR_CALO_REG]);
 
-void boostedjet(ap_uint<10> jet_seed, region_t regions[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG], ap_uint<10> jet_et[NR_CNTR_REG], bitset<3> rEta_jet[NR_CNTR_REG], bitset<3> rPhi_jet[NR_CNTR_REG]);
+void boostedjet(ap_uint<10> jet_seed, 
+		region_t regions[NR_CNTR_REG], 
+		ap_uint<10> et_3by3[NR_CNTR_REG], 
+		ap_uint<10> jet_et[NR_CNTR_REG], 
+		bitset<3> rEta_jet[NR_CNTR_REG], 
+		bitset<3> rPhi_jet[NR_CNTR_REG]);
 
 #endif
