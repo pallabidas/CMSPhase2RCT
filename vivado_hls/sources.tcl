@@ -13,7 +13,7 @@ add_files src/jet.cpp
 add_files src/et_3by3.cpp
 add_files src/PU_LUT.cpp
 add_files src/boostedjet.cpp
-add_files src/superindices.cpp 
+#add_files src/superindices.cpp
 ##
 ## Add testbench files
 #add_files -tb src/data.txt
