@@ -3,11 +3,13 @@
 #include "UCTSummaryCard.hpp"
 #include "region_neighbors.h"
 #include <bitset>
+#include "superregion.h"
+
 using std::bitset;
 
 bitset<3> etapattern(bool activeRegion[9])
 {
-#pragma HLS PIPELINE II=3
+#pragma HLS PIPELINE II=1
 #pragma HLS ARRAY_RESHAPE  variable=activeRegion complete  dim=1
 
 	bitset<3> rEta;
@@ -25,7 +27,7 @@ bitset<3> etapattern(bool activeRegion[9])
 
 bitset<3> phipattern(bool activeRegion[9])
 {
-#pragma HLS PIPELINE II=3
+#pragma HLS PIPELINE II=1
 #pragma HLS ARRAY_RESHAPE  variable=activeRegion complete  dim=1
 
 	bitset<3> rPhi;
@@ -43,14 +45,17 @@ bitset<3> phipattern(bool activeRegion[9])
 
 void boostedjet(ap_uint<10> jet_seed,             // input
 			  region_t regions[NR_CNTR_REG],
-			  ap_uint<10> et_3by3[NR_CNTR_REG], // input 26x18
-			  ap_uint<10> et_jet [NR_CNTR_REG], // *output* 26x18
-			  bitset<3> rEta_jet [NR_CNTR_REG],
-			  bitset<3> rPhi_jet [NR_CNTR_REG])
+			  ap_uint<10> et_3by3[NR_CNTR_REG], // input 14x18
+			  ap_uint<10> et_jet [NR_SCNTR_REG], // *output* 7x9
+			  bitset<3> rEta_jet [NR_SCNTR_REG],
+			  bitset<3> rPhi_jet [NR_SCNTR_REG])
  
 {
 
 	bool jet_veto[NR_CNTR_REG];
+	ap_uint<10> sr_et[NR_SCNTR_REG];
+	bitset<3> sr_eta[NR_SCNTR_REG];
+	bitset<3> sr_phi[NR_SCNTR_REG];
 	bool activeRegion[9];
 
 #pragma HLS INTERFACE ap_none port=jet_seed
@@ -64,19 +69,26 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 #pragma HLS ARRAY_RESHAPE  variable=rPhi_jet  complete  dim=1
 #pragma HLS ARRAY_RESHAPE  variable=jet_veto  complete  dim=1
 #pragma HLS ARRAY_RESHAPE  variable=activeRegion complete  dim=1
+#pragma HLS ARRAY_PARTITION  variable=sr_et     complete  dim=1
+#pragma HLS ARRAY_PARTITION  variable=sr_eta    complete  dim=1
+#pragma HLS ARRAY_PARTITION  variable=sr_phi    complete  dim=1
 #pragma HLS inline region
+
+	for (int idx = 0; idx < NR_SCNTR_REG; idx++)
+	{
+#pragma HLS UNROLL
+		sr_et[idx] = 0;
+		sr_eta[idx] = 0;
+		sr_phi[idx] = 0;
+	}
 
 	loop_rgn_et: for (int idx = 0; idx < NR_CNTR_REG; idx++)
 	{
 #pragma HLS UNROLL
 
-		if ((idx % 14 == 0) || ((idx + 1) % 14) == 0)
-		{
-		        et_jet[idx] = 0;
-		        rEta_jet[idx] = 0;
-			rPhi_jet[idx] = 0;
-		}
-		else
+		ap_uint<8> sidx = central_super_region_idx[idx];
+
+		if(!(idx % 14 == 0) && !((idx + 1) % 14 == 0))
 		{
 			ap_uint<10> et_C, et_N, et_S, et_E, et_W, et_NE, et_NW, et_SE, et_SW;
 			bool tauveto_C, tauveto_N, tauveto_S, tauveto_E, tauveto_W, tauveto_NE, tauveto_NW, tauveto_SE, tauveto_SW;
@@ -177,34 +189,40 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 			if (et_C < et_SW)     jet_veto[idx] = true;
 
 			// assign et_jet and pattern
-			if (jet_veto[idx] == false){
-				et_jet[idx] = et_3by3[idx];
-				if (!tauveto_C && et_C > 30 && et_C > (et_jet[idx] >> 4)) activeRegion[4] = true;
+			if (jet_veto[idx] == false && et_3by3[idx] > sr_et[sidx]){
+				sr_et[sidx] = et_3by3[idx];
+				et_jet[sidx] = et_3by3[idx];
+				if (!tauveto_C && et_C > 30 && et_C > (et_jet[sidx] >> 4)) activeRegion[4] = true;
 				else activeRegion[4] = false;
-				if (!tauveto_N && et_N > 30 && et_N > (et_jet[idx] >> 4)) activeRegion[3] = true;
+				if (!tauveto_N && et_N > 30 && et_N > (et_jet[sidx] >> 4)) activeRegion[3] = true;
 				else activeRegion[3] = false;
-				if (!tauveto_E && et_E > 30 && et_E > (et_jet[idx] >> 4)) activeRegion[1] = true;
+				if (!tauveto_E && et_E > 30 && et_E > (et_jet[sidx] >> 4)) activeRegion[1] = true;
 				else activeRegion[1] = false;
-				if (!tauveto_W && et_W > 30 && et_W > (et_jet[idx] >> 4)) activeRegion[7] = true;
+				if (!tauveto_W && et_W > 30 && et_W > (et_jet[sidx] >> 4)) activeRegion[7] = true;
 				else activeRegion[7] = false;
-				if (!tauveto_S && et_S > 30 && et_S > (et_jet[idx] >> 4)) activeRegion[5] = true;
+				if (!tauveto_S && et_S > 30 && et_S > (et_jet[sidx] >> 4)) activeRegion[5] = true;
 				else activeRegion[5] = false;
-				if (!tauveto_NW && et_NW > 30 && et_NW > (et_jet[idx] >> 4)) activeRegion[6] = true;
+				if (!tauveto_NW && et_NW > 30 && et_NW > (et_jet[sidx] >> 4)) activeRegion[6] = true;
 				else activeRegion[6] = false;
-				if (!tauveto_NE && et_NE > 30 && et_NE > (et_jet[idx] >> 4)) activeRegion[0] = true;
+				if (!tauveto_NE && et_NE > 30 && et_NE > (et_jet[sidx] >> 4)) activeRegion[0] = true;
 				else activeRegion[0] = false;
-				if (!tauveto_SW && et_SW > 30 && et_SW > (et_jet[idx] >> 4)) activeRegion[8] = true;
+				if (!tauveto_SW && et_SW > 30 && et_SW > (et_jet[sidx] >> 4)) activeRegion[8] = true;
 				else activeRegion[8] = false;
-				if (!tauveto_SE && et_SE > 30 && et_SE > (et_jet[idx] >> 4)) activeRegion[2] = true;
+				if (!tauveto_SE && et_SE > 30 && et_SE > (et_jet[sidx] >> 4)) activeRegion[2] = true;
 				else activeRegion[2] = false;
-				rEta_jet[idx] = etapattern(activeRegion);
-				rPhi_jet[idx] = phipattern(activeRegion);			
+				rEta_jet[sidx] = etapattern(activeRegion);
+				rPhi_jet[sidx] = phipattern(activeRegion);
+				sr_eta[sidx] = rEta_jet[sidx];
+				sr_phi[sidx] = rPhi_jet[sidx];
 			}
+
 			else {
-				et_jet[idx] = 0;
-				rEta_jet[idx] = 0;
-				rPhi_jet[idx] = 0;
+				et_jet[sidx] = sr_et[sidx];
+				rEta_jet[sidx] = sr_eta[sidx];
+				rPhi_jet[sidx] = sr_phi[sidx];
 			}
+
 		}
 	}
+	return;
 }

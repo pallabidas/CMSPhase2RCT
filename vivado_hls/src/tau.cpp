@@ -1,14 +1,18 @@
 #include <cstdlib>
 #include "ap_int.h"
-
 #include "UCTSummaryCard.hpp"
 #include "region_neighbors.h"
+#include "superregion.h"
 
 void tau(ap_uint<10> tau_seed, ap_ufixed<7, 1, AP_RND, AP_SAT> tau_IsoFact,
 		region_t regions[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG],
-		ap_uint<10> nonIso_tau_et[NR_CNTR_REG],
-		ap_uint<10> Iso_tau_et[NR_CNTR_REG])
+		ap_uint<10> nonIso_tau_et[NR_SCNTR_REG],
+		ap_uint<10> Iso_tau_et[NR_SCNTR_REG])
 {
+	ap_uint<10> sr_et[NR_SCNTR_REG];
+	ap_uint<10> sr_et_tau;
+	ap_uint<10> sr_et_tau_Iso;
+
 #pragma HLS PIPELINE II=3
 
 #pragma HLS INTERFACE ap_none port=tau_IsoFact
@@ -18,10 +22,18 @@ void tau(ap_uint<10> tau_seed, ap_ufixed<7, 1, AP_RND, AP_SAT> tau_IsoFact,
 #pragma HLS ARRAY_RESHAPE variable=et_3by3 complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=nonIso_tau_et complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=Iso_tau_et complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=sr_et complete dim=1
+
+	for (int idx = 0; idx < NR_SCNTR_REG; idx++)
+	{
+#pragma HLS UNROLL
+		sr_et[idx] = 0;
+	}
 
 	label0: for (int idx = 0; idx < NR_CNTR_REG; idx++)
 	{
 #pragma HLS UNROLL
+		ap_uint<8> sidx = central_super_region_idx[idx];
 		ap_uint<10> et_tau;
 		ap_uint<10> et_tau_Iso;
 
@@ -148,9 +160,19 @@ void tau(ap_uint<10> tau_seed, ap_ufixed<7, 1, AP_RND, AP_SAT> tau_IsoFact,
 				et_tau_Iso = 0;
 		}
 
-		nonIso_tau_et[idx] = et_tau;
-		Iso_tau_et[idx] = et_tau_Iso;
-
+		if (regions[idx].et >= sr_et[sidx])
+		{
+			sr_et[sidx] = regions[idx].et;
+			nonIso_tau_et[sidx] = et_tau;
+			Iso_tau_et[sidx] = et_tau_Iso;
+			sr_et_tau = et_tau;
+			sr_et_tau_Iso = et_tau_Iso;
+		}
+		else
+		{
+			nonIso_tau_et[sidx] = sr_et_tau;
+			Iso_tau_et[sidx] = sr_et_tau_Iso;
+		}
 	}
 	return;
 }

@@ -16,6 +16,7 @@ using namespace std;
 #include "am_sort.h"
 #include "PU_LUT.h"
 #include "calo_out_coordinates.h"
+#include "superregion.h"
 
 const uint16_t NRegionsPerLink = 11; // Bits 16-31, 32-47, ..., 176-191, keeping range(15, 0) unused
 const uint16_t MaxRegions = N_CH_IN * NRegionsPerLink;
@@ -97,22 +98,22 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 	
 	ap_uint<10> et_3by3_calo[NR_CALO_REG];
 	
-	ap_uint<10> et_jet_calo[NR_CALO_REG];
+	ap_uint<10> et_jet_calo[NR_SUPER_REG];
 	
 	ap_uint<10> et_3by3_cntr[NR_CNTR_REG];
 
-	ap_uint<10> et_jet_boosted[NR_CNTR_REG];
-	bitset<3>  rEta_jet_boosted[NR_CNTR_REG];
-	bitset<3>  rPhi_jet_boosted[NR_CNTR_REG];
+	ap_uint<10> et_jet_boosted[NR_SCNTR_REG];
+	bitset<3>  rEta_jet_boosted[NR_SCNTR_REG];
+	bitset<3>  rPhi_jet_boosted[NR_SCNTR_REG];
 	
-	ap_uint<10> nonIso_egamma_et[NR_CNTR_REG];
-	ap_uint<10> Iso_egamma_et[NR_CNTR_REG];
+	ap_uint<10> nonIso_egamma_et[NR_SCNTR_REG];
+	ap_uint<10> Iso_egamma_et[NR_SCNTR_REG];
 	
-	ap_uint<10> nonIso_tau_et[NR_CNTR_REG];
-	ap_uint<10> Iso_tau_et[NR_CNTR_REG];
+	ap_uint<10> nonIso_tau_et[NR_SCNTR_REG];
+	ap_uint<10> Iso_tau_et[NR_SCNTR_REG];
 
 ////////////////////////////////////////////////////////////
-	//// Sort Objects (SO) , inputs and outputs
+	// Sort Objects (SO) , inputs and outputs
 	t_so so_in_jet_cr[64];
 	//t_so so_out_jet_cr[8];
 
@@ -147,9 +148,6 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 	region_t fwd_region[NR_FWD_REG];
 	region_t centr_region_pu_sub[NR_CNTR_REG];
 
-	int sr_index[NR_SUPER_REG];
-	int sr_centre_index[NR_SCNTR_REG];
-
 ///////////////////////////////////////////////////////////
 
 	algo_config_t algo_config;
@@ -168,8 +166,6 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 #pragma HLS ARRAY_RESHAPE variable=centr_region complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=fwd_region complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=centr_region_pu_sub complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=sr_index complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=sr_centre_index complete dim=1
 
 #pragma HLS ARRAY_RESHAPE variable=so_in_jet_cr complete dim=0
 //#pragma HLS ARRAY_RESHAPE variable=so_out_jet_cr complete dim=0
@@ -283,18 +279,11 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		for (int reg = 6; reg < 20; reg++)
 		{
 #pragma HLS UNROLL
-
-			int calo_index = 26 * phi + reg;
-			int centre_index = 14 * phi + reg - 6;
-
-			et_3by3_cntr[centre_index] = et_3by3_calo[calo_index];
-			centr_region_pu_sub[centre_index].et = pu_sub_et_calo[calo_index];
+			et_3by3_cntr[phi * 14 + reg - 6] = et_3by3_calo[phi * 26 + reg];
+			centr_region_pu_sub[phi * 14 + reg - 6].et = pu_sub_et_calo[phi	* 26 + reg];
 		}
 	}
 
-	// Get the super-region indices
-	superregion(et_3by3_calo, sr_index);
-	superregion_centre(et_3by3_cntr, sr_centre_index);
 
 	// Jet algorithm
 	jet(algo_config.jet_seed, pu_sub_et_calo, et_3by3_calo, et_jet_calo);
@@ -316,12 +305,11 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		for (int reg = 0; reg < 13; reg++)
 		{
 #pragma HLS UNROLL
-			int sr_idx_in = 13 * phi + reg; // full SR calo index (0-116)
-			int idx_in = sr_index[sr_idx_in]; // highest et calo region index within the SR (0-467)
+			int idx_in = 13 * phi + reg; // full super-region calo index (0-116)
 
 			if (reg < 3)
 			{
-				int idx_out = 6 * phi + reg; // forward SR index (0-53)
+				int idx_out = 6 * phi + reg; // forward super-region index (0-53)
 
 				so_in_jet_fwd[idx_out].et = et_jet_calo[idx_in];
 				so_in_jet_fwd[idx_out].idx = idx_in;
@@ -330,7 +318,7 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 			}
 			else if (reg > 9)
 			{
-				int idx_out = 6 * phi - 7 + reg; // forward SR index (0-53)
+				int idx_out = 6 * phi - 7 + reg; // forward super-region index (0-53)
 
 				so_in_jet_fwd[idx_out].et = et_jet_calo[idx_in];
 				so_in_jet_fwd[idx_out].idx = idx_in;
@@ -339,41 +327,45 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 			}
 			else
 			{
-				int idx_out = 7 * phi - 3 + reg; // central SR index (0-62)
-				int idx = sr_centre_index[idx_out]; // highest et central index within the SR (0-251)
+				int idx_out = 7 * phi - 3 + reg; // central super-region index (0-62)
 
 				so_in_jet_cr[idx_out].et = et_jet_calo[idx_in];
 				so_in_jet_cr[idx_out].idx = idx_in;
 				so_in_jet_cr[idx_out].rloc_phi = calo_regions[idx_in].rloc_phi;
 				so_in_jet_cr[idx_out].rloc_eta = calo_regions[idx_in].rloc_eta;
-
-				so_in_eg_noniso[idx_out].et = nonIso_egamma_et[idx];
-				so_in_eg_noniso[idx_out].idx = idx;
-				so_in_eg_noniso[idx_out].rloc_phi = centr_region[idx].rloc_phi;
-				so_in_eg_noniso[idx_out].rloc_eta = centr_region[idx].rloc_eta;
-
-				so_in_eg_iso[idx_out].et = Iso_egamma_et[idx];
-				so_in_eg_iso[idx_out].idx = idx;
-				so_in_eg_iso[idx_out].rloc_phi = centr_region[idx].rloc_phi;
-				so_in_eg_iso[idx_out].rloc_eta = centr_region[idx].rloc_eta;
-
-				so_in_tau_noniso[idx_out].et = nonIso_tau_et[idx];
-				so_in_tau_noniso[idx_out].idx = idx;
-				so_in_tau_noniso[idx_out].rloc_phi = centr_region[idx].rloc_phi;
-				so_in_tau_noniso[idx_out].rloc_eta = centr_region[idx].rloc_eta;
-
-				so_in_tau_iso[idx_out].et = Iso_tau_et[idx];
-				so_in_tau_iso[idx_out].idx = idx;
-				so_in_tau_iso[idx_out].rloc_phi = centr_region[idx].rloc_phi;
-				so_in_tau_iso[idx_out].rloc_eta = centr_region[idx].rloc_eta;
-
-				so_in_jet_boosted[idx_out].et = et_jet_boosted[idx];
-				so_in_jet_boosted[idx_out].idx = idx;
-				so_in_jet_boosted[idx_out].rloc_phi = centr_region[idx].rloc_phi;
-				so_in_jet_boosted[idx_out].rloc_eta = centr_region[idx].rloc_eta;
-
 			}
 		}
+	}
+
+	for (int idx = 0; idx < 63; idx++)
+	{
+#pragma HLS UNROLL
+
+		so_in_eg_noniso[idx].et = nonIso_egamma_et[idx];
+		so_in_eg_noniso[idx].idx = idx;
+		so_in_eg_noniso[idx].rloc_phi = centr_region[idx].rloc_phi;
+		so_in_eg_noniso[idx].rloc_eta = centr_region[idx].rloc_eta;
+
+		so_in_eg_iso[idx].et = Iso_egamma_et[idx];
+		so_in_eg_iso[idx].idx = idx;
+		so_in_eg_iso[idx].rloc_phi = centr_region[idx].rloc_phi;
+		so_in_eg_iso[idx].rloc_eta = centr_region[idx].rloc_eta;
+
+		so_in_tau_noniso[idx].et = nonIso_tau_et[idx];
+		so_in_tau_noniso[idx].idx = idx;
+		so_in_tau_noniso[idx].rloc_phi = centr_region[idx].rloc_phi;
+		so_in_tau_noniso[idx].rloc_eta = centr_region[idx].rloc_eta;
+
+		so_in_tau_iso[idx].et = Iso_tau_et[idx];
+		so_in_tau_iso[idx].idx = idx;
+		so_in_tau_iso[idx].rloc_phi = centr_region[idx].rloc_phi;
+		so_in_tau_iso[idx].rloc_eta = centr_region[idx].rloc_eta;
+
+		so_in_jet_boosted[idx].et = et_jet_boosted[idx];
+		so_in_jet_boosted[idx].idx = idx;
+		so_in_jet_boosted[idx].rloc_phi = centr_region[idx].rloc_phi;
+		so_in_jet_boosted[idx].rloc_eta = centr_region[idx].rloc_eta;
+
 	}
 
 	for (int idx = 54; idx < 64; idx++)
@@ -421,69 +413,6 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		so_in_jet_boosted[idx].rloc_eta = 0;
 	}
 
-//	for (int sidx = 0; sidx < 63; sidx++)
-//	{
-//#pragma HLS UNROLL
-//
-//		int idx = sr_centre_index[sidx];
-//
-//		so_in_eg_noniso[sidx].et = nonIso_egamma_et[sidx];
-//		so_in_eg_noniso[sidx].idx = idx;
-//		so_in_eg_noniso[sidx].rloc_phi = centr_region[idx].rloc_phi;
-//		so_in_eg_noniso[sidx].rloc_eta = centr_region[idx].rloc_eta;
-//
-//		so_in_eg_iso[sidx].et = Iso_egamma_et[sidx];
-//		so_in_eg_iso[sidx].idx = idx;
-//		so_in_eg_iso[sidx].rloc_phi = centr_region[idx].rloc_phi;
-//		so_in_eg_iso[sidx].rloc_eta = centr_region[idx].rloc_eta;
-//
-//		so_in_tau_noniso[sidx].et = nonIso_tau_et[sidx];
-//		so_in_tau_noniso[sidx].idx = idx;
-//		so_in_tau_noniso[sidx].rloc_phi = centr_region[idx].rloc_phi;
-//		so_in_tau_noniso[sidx].rloc_eta = centr_region[idx].rloc_eta;
-//
-//		so_in_tau_iso[sidx].et = Iso_tau_et[sidx];
-//		so_in_tau_iso[sidx].idx = idx;
-//		so_in_tau_iso[sidx].rloc_phi = centr_region[idx].rloc_phi;
-//		so_in_tau_iso[sidx].rloc_eta = centr_region[idx].rloc_eta;
-//
-//		so_in_jet_boosted[sidx].et = et_jet_boosted[sidx];
-//		so_in_jet_boosted[sidx].idx = idx;
-//		so_in_jet_boosted[sidx].rloc_phi = centr_region[idx].rloc_phi;
-//		so_in_jet_boosted[sidx].rloc_eta = centr_region[idx].rloc_eta;
-//
-//	}
-
-//	for (int sidx = 63; sidx < 64; sidx++)
-//	{
-//#pragma HLS UNROLL
-//
-//		so_in_eg_noniso[sidx].et = 0;
-//		so_in_eg_noniso[sidx].idx = 0;
-//		so_in_eg_noniso[sidx].rloc_phi = 0;
-//		so_in_eg_noniso[sidx].rloc_eta = 0;
-//
-//		so_in_eg_iso[sidx].et = 0;
-//		so_in_eg_iso[sidx].idx = 0;
-//		so_in_eg_iso[sidx].rloc_phi = 0;
-//		so_in_eg_iso[sidx].rloc_eta = 0;
-//
-//		so_in_tau_noniso[sidx].et = 0;
-//		so_in_tau_noniso[sidx].idx = 0;
-//		so_in_tau_noniso[sidx].rloc_phi = 0;
-//		so_in_tau_noniso[sidx].rloc_eta = 0;
-//
-//		so_in_tau_iso[sidx].et = 0;
-//		so_in_tau_iso[sidx].idx = 0;
-//		so_in_tau_iso[sidx].rloc_phi = 0;
-//		so_in_tau_iso[sidx].rloc_eta = 0;
-//
-//		so_in_jet_boosted[sidx].et = 0;
-//		so_in_jet_boosted[sidx].idx = 0;
-//		so_in_jet_boosted[sidx].rloc_phi = 0;
-//		so_in_jet_boosted[sidx].rloc_eta = 0;
-//	}
-
 ////////////////////////////////////////////////////////////
 	// Do the actual sorting
 	//am_sort_256x8(so_in_jet_cr, so_out_jet_cr);
@@ -498,7 +427,6 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 
 ////////////////////////////////////////////////////////////
 	// Assign the top 8 candidates to algorithnm outputs
-	int olink;
 	for (int idx = 0; idx < 8; idx++)
 	{
 #pragma HLS UNROLL

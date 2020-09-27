@@ -1,14 +1,15 @@
 #include "ap_int.h"
-
 #include "region_neighbors.h"
+#include "superregion.h"
 
 void jet(ap_uint<10> jet_seed,             // input
 			  ap_uint<10> et_rgn [NR_CALO_REG], // input 26x18
 			  ap_uint<10> et_3by3[NR_CALO_REG], // input 26x18
-			  ap_uint<10> et_jet [NR_CALO_REG]) // *output* 26x18
+			  ap_uint<10> et_jet [NR_SUPER_REG]) // *output* 26x18
 {
 
 	bool jet_veto[NR_CALO_REG];
+	ap_uint<10> sr_et[NR_SUPER_REG];
 
 #pragma HLS INTERFACE ap_none port=jet_seed
 
@@ -18,10 +19,19 @@ void jet(ap_uint<10> jet_seed,             // input
 #pragma HLS ARRAY_RESHAPE  variable=et_3by3   complete  dim=1
 #pragma HLS ARRAY_RESHAPE  variable=et_jet    complete  dim=1
 #pragma HLS ARRAY_RESHAPE  variable=jet_veto  complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=sr_et     complete  dim=1
+
+	for (int idx = 0; idx < NR_SUPER_REG; idx++)
+	{
+#pragma HLS UNROLL
+		sr_et[idx] = 0;
+	}
 
 	loop_rgn_et: for (int idx = 0; idx < NR_CALO_REG; idx++)
 	{
 #pragma HLS UNROLL
+		ap_uint<8> sidx = super_region_idx[idx];
+
 		ap_uint<10> et_C, et_N, et_E, et_W, et_S,
 					et_NE, et_NW, et_SE, et_SW;
 
@@ -65,10 +75,17 @@ void jet(ap_uint<10> jet_seed,             // input
 		if (et_C < et_SE)     jet_veto[idx] = true;
 		if (et_C < et_SW)     jet_veto[idx] = true;
 
-        // assign et_jet
-		if (jet_veto[idx] == false)
-			et_jet[idx] = et_3by3[idx];
+	        // assign et_jet
+		if (jet_veto[idx] == false  && et_3by3[idx] > sr_et[sidx])
+		{
+			sr_et[sidx] = et_3by3[idx];
+			et_jet[sidx] = et_3by3[idx];
+		}
+
 		else
-			et_jet[idx] = 0;
+		{
+			et_jet[sidx] = sr_et[sidx];
+		}
 	}
+	return;
 }

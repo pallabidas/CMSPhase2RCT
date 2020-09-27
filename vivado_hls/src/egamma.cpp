@@ -1,15 +1,19 @@
 #include <cstdlib>
 #include "ap_int.h"
-
 #include "UCTSummaryCard.hpp"
 #include "region_neighbors.h"
+#include "superregion.h"
 
 void egamma(ap_uint<10> egamma_seed,
 		ap_ufixed<7, 1, AP_RND, AP_SAT> egamma_IsoFact,
 		region_t regions[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG],
-		ap_uint<10> nonIso_egamma_et[NR_CNTR_REG],
-		ap_uint<10> Iso_egamma_et[NR_CNTR_REG])
+		ap_uint<10> nonIso_egamma_et[NR_SCNTR_REG],
+		ap_uint<10> Iso_egamma_et[NR_SCNTR_REG])
 {
+	ap_uint<10> sr_et[NR_SCNTR_REG];
+	ap_uint<10> sr_et_egamma;
+	ap_uint<10> sr_et_egamma_Iso;
+
 #pragma HLS PIPELINE II=3
 
 #pragma HLS INTERFACE ap_none port=egamma_IsoFact
@@ -19,11 +23,18 @@ void egamma(ap_uint<10> egamma_seed,
 #pragma HLS ARRAY_RESHAPE variable=et_3by3 complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=nonIso_egamma_et complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=Iso_egamma_et complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=sr_et complete dim=1
+
+	for (int idx = 0; idx < NR_SCNTR_REG; idx++)
+	{
+#pragma HLS UNROLL
+		sr_et[idx] = 0;
+	}
 
 	label0: for (int idx = 0; idx < NR_CNTR_REG; idx++)
 	{
 #pragma HLS UNROLL
-
+		ap_uint<8> sidx = central_super_region_idx[idx];
 		ap_uint<10> et_egamma;
 		ap_uint<10> et_egamma_Iso;
 
@@ -43,7 +54,7 @@ void egamma(ap_uint<10> egamma_seed,
 
 			if (regions[idx].eg_veto == false && regions[idx].et > egamma_seed)
 			{
-/////// North
+				/////// North
 				if (neigh_N != -1)
 				{
 					if (regions[idx].rloc_phi == 2
@@ -63,7 +74,7 @@ void egamma(ap_uint<10> egamma_seed,
 						}
 					}
 				}
-/////// South
+				/////// South
 				if (neigh_S != -1)
 				{
 					if (regions[idx].rloc_phi == 0
@@ -84,7 +95,7 @@ void egamma(ap_uint<10> egamma_seed,
 					}
 				}
 
-/////// West
+				/////// West
 				if (neigh_W != -1)
 				{
 					if (regions[idx].rloc_phi == 0
@@ -143,9 +154,19 @@ void egamma(ap_uint<10> egamma_seed,
 				et_egamma_Iso = 0;
 		}
 
-		nonIso_egamma_et[idx] = et_egamma;
-		Iso_egamma_et[idx] = et_egamma_Iso;
-
+		if(regions[idx].et >= sr_et[sidx])
+		{
+			sr_et[sidx] = regions[idx].et;
+			nonIso_egamma_et[sidx] = et_egamma;
+			Iso_egamma_et[sidx] = et_egamma_Iso;
+			sr_et_egamma = et_egamma;
+			sr_et_egamma_Iso = et_egamma_Iso;
+		}
+		else
+		{
+			nonIso_egamma_et[sidx] = sr_et_egamma;
+			Iso_egamma_et[sidx] = sr_et_egamma_Iso;
+		}
 	}
 	return;
 }
