@@ -15,10 +15,10 @@ void egamma(ap_uint<10> egamma_seed,
 #pragma HLS INTERFACE ap_none port=egamma_IsoFact
 #pragma HLS INTERFACE ap_none port=egamma_seed
 
-#pragma HLS ARRAY_RESHAPE variable=regions complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=et_3by3 complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=nonIso_egamma_et complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=Iso_egamma_et complete dim=1
+#pragma HLS ARRAY_PARTITION variable=regions complete dim=1
+#pragma HLS ARRAY_PARTITION variable=et_3by3 complete dim=1
+#pragma HLS ARRAY_PARTITION variable=nonIso_egamma_et complete dim=1
+#pragma HLS ARRAY_PARTITION variable=Iso_egamma_et complete dim=1
 
 	label0: for (int idx = 0; idx < NR_CNTR_REG; idx++)
 	{
