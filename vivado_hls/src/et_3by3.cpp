@@ -26,8 +26,8 @@ void et_3by3(ap_uint<10> et[NR_CALO_REG], ap_uint<10> et_3by3[NR_CALO_REG])
 {
 
 #pragma HLS PIPELINE II=3
-#pragma HLS ARRAY_RESHAPE variable=et complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=et_3by3 complete dim=1
+#pragma HLS ARRAY_PARTITION variable=et complete dim=1
+#pragma HLS ARRAY_PARTITION variable=et_3by3 complete dim=1
 
 	et_3by3_loop: for (int idx = 0; idx < NR_CALO_REG; idx++)
 	{
