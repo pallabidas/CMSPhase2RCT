@@ -5,26 +5,31 @@
 void jet(ap_uint<10> jet_seed,             // input
 			  ap_uint<10> et_rgn [NR_CALO_REG], // input 26x18
 			  ap_uint<10> et_3by3[NR_CALO_REG], // input 26x18
-			  ap_uint<10> et_jet [NR_SUPER_REG]) // *output* 26x18
+			  ap_uint<10> et_jet [NR_SUPER_REG], // *output* 13x9
+			  ap_uint<8> rIdx    [NR_SUPER_REG])
 {
 
 	bool jet_veto[NR_CALO_REG];
 	ap_uint<10> sr_et[NR_SUPER_REG];
+	ap_uint<8> sr_idx[NR_SUPER_REG];
 
 #pragma HLS INTERFACE ap_none port=jet_seed
 
 #pragma HLS PIPELINE II=3 // target clk freq = 120 MHz
 
-#pragma HLS ARRAY_RESHAPE  variable=et_rgn    complete  dim=1
-#pragma HLS ARRAY_RESHAPE  variable=et_3by3   complete  dim=1
-#pragma HLS ARRAY_RESHAPE  variable=et_jet    complete  dim=1
-#pragma HLS ARRAY_RESHAPE  variable=jet_veto  complete  dim=1
-#pragma HLS ARRAY_RESHAPE  variable=sr_et     complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=et_rgn    complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=et_3by3   complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=et_jet    complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=rIdx      complete  dim=1
+#pragma HLS ARRAY_RESHAPE variable=jet_veto  complete  dim=1
+#pragma HLS ARRAY_RESHAPE variable=sr_et     complete  dim=1
+#pragma HLS ARRAY_RESHAPE variable=sr_idx    complete  dim=1
 
 	for (int idx = 0; idx < NR_SUPER_REG; idx++)
 	{
 #pragma HLS UNROLL
 		sr_et[idx] = 0;
+		sr_idx[idx] = 0;
 	}
 
 	loop_rgn_et: for (int idx = 0; idx < NR_CALO_REG; idx++)
@@ -80,11 +85,14 @@ void jet(ap_uint<10> jet_seed,             // input
 		{
 			sr_et[sidx] = et_3by3[idx];
 			et_jet[sidx] = et_3by3[idx];
+			rIdx[sidx] = idx;
+			sr_idx[sidx] = idx;
 		}
 
 		else
 		{
 			et_jet[sidx] = sr_et[sidx];
+			rIdx[sidx] = sr_idx[sidx];
 		}
 	}
 	return;

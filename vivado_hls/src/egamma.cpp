@@ -8,27 +8,36 @@ void egamma(ap_uint<10> egamma_seed,
 		ap_ufixed<7, 1, AP_RND, AP_SAT> egamma_IsoFact,
 		region_t regions[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG],
 		ap_uint<10> nonIso_egamma_et[NR_SCNTR_REG],
-		ap_uint<10> Iso_egamma_et[NR_SCNTR_REG])
+		ap_uint<10> Iso_egamma_et[NR_SCNTR_REG],
+		ap_uint<8> rIdx[NR_SCNTR_REG])
 {
 	ap_uint<10> sr_et[NR_SCNTR_REG];
-	ap_uint<10> sr_et_egamma;
-	ap_uint<10> sr_et_egamma_Iso;
+	ap_uint<10> sr_et_egamma[NR_SCNTR_REG];
+	ap_uint<10> sr_et_egamma_Iso[NR_SCNTR_REG];
+	ap_uint<8> sr_idx[NR_SCNTR_REG];
 
 #pragma HLS PIPELINE II=3
 
 #pragma HLS INTERFACE ap_none port=egamma_IsoFact
 #pragma HLS INTERFACE ap_none port=egamma_seed
 
-#pragma HLS ARRAY_RESHAPE variable=regions complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=et_3by3 complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=nonIso_egamma_et complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=Iso_egamma_et complete dim=1
+#pragma HLS ARRAY_PARTITION variable=regions complete dim=1
+#pragma HLS ARRAY_PARTITION variable=et_3by3 complete dim=1
+#pragma HLS ARRAY_PARTITION variable=nonIso_egamma_et complete dim=1
+#pragma HLS ARRAY_PARTITION variable=Iso_egamma_et complete dim=1
+#pragma HLS ARRAY_PARTITION variable=rIdx complete  dim=1
 #pragma HLS ARRAY_RESHAPE variable=sr_et complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=sr_et_egamma complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=sr_et_egamma_Iso complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=sr_idx complete dim=1
 
 	for (int idx = 0; idx < NR_SCNTR_REG; idx++)
 	{
 #pragma HLS UNROLL
 		sr_et[idx] = 0;
+		sr_et_egamma[idx] = 0;
+		sr_et_egamma_Iso[idx] = 0;
+		sr_idx[idx] = 0;
 	}
 
 	label0: for (int idx = 0; idx < NR_CNTR_REG; idx++)
@@ -159,13 +168,16 @@ void egamma(ap_uint<10> egamma_seed,
 			sr_et[sidx] = regions[idx].et;
 			nonIso_egamma_et[sidx] = et_egamma;
 			Iso_egamma_et[sidx] = et_egamma_Iso;
-			sr_et_egamma = et_egamma;
-			sr_et_egamma_Iso = et_egamma_Iso;
+			rIdx[sidx] = idx;
+			sr_et_egamma[sidx] = et_egamma;
+			sr_et_egamma_Iso[sidx] = et_egamma_Iso;
+			sr_idx[sidx] = idx;
 		}
 		else
 		{
-			nonIso_egamma_et[sidx] = sr_et_egamma;
-			Iso_egamma_et[sidx] = sr_et_egamma_Iso;
+			nonIso_egamma_et[sidx] = sr_et_egamma[sidx];
+			Iso_egamma_et[sidx] = sr_et_egamma_Iso[sidx];
+			rIdx[sidx] = sr_idx[sidx];
 		}
 	}
 	return;

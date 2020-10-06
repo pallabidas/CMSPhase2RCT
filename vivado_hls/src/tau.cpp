@@ -7,27 +7,36 @@
 void tau(ap_uint<10> tau_seed, ap_ufixed<7, 1, AP_RND, AP_SAT> tau_IsoFact,
 		region_t regions[NR_CNTR_REG], ap_uint<10> et_3by3[NR_CNTR_REG],
 		ap_uint<10> nonIso_tau_et[NR_SCNTR_REG],
-		ap_uint<10> Iso_tau_et[NR_SCNTR_REG])
+		ap_uint<10> Iso_tau_et[NR_SCNTR_REG],
+		ap_uint<8> rIdx[NR_SCNTR_REG])
 {
 	ap_uint<10> sr_et[NR_SCNTR_REG];
-	ap_uint<10> sr_et_tau;
-	ap_uint<10> sr_et_tau_Iso;
+	ap_uint<10> sr_et_tau[NR_SCNTR_REG];
+	ap_uint<10> sr_et_tau_Iso[NR_SCNTR_REG];
+	ap_uint<8> sr_idx[NR_SCNTR_REG];
 
 #pragma HLS PIPELINE II=3
 
 #pragma HLS INTERFACE ap_none port=tau_IsoFact
 #pragma HLS INTERFACE ap_none port=tau_seed
 
-#pragma HLS ARRAY_RESHAPE variable=regions complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=et_3by3 complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=nonIso_tau_et complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=Iso_tau_et complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=sr_et complete dim=1
+#pragma HLS ARRAY_PARTITION variable=regions complete dim=1
+#pragma HLS ARRAY_PARTITION variable=et_3by3 complete dim=1
+#pragma HLS ARRAY_PARTITION variable=nonIso_tau_et complete dim=1
+#pragma HLS ARRAY_PARTITION variable=Iso_tau_et complete dim=1
+#pragma HLS ARRAY_PARTITION variable=rIdx complete  dim=1
+#pragma HLS ARRAY_RESHAPE variable=sr_et complete dim=0
+#pragma HLS ARRAY_RESHAPE variable=sr_et_tau complete dim=0
+#pragma HLS ARRAY_RESHAPE variable=sr_et_tau_Iso complete dim=0
+#pragma HLS ARRAY_RESHAPE variable=sr_idx complete dim=0
 
 	for (int idx = 0; idx < NR_SCNTR_REG; idx++)
 	{
 #pragma HLS UNROLL
 		sr_et[idx] = 0;
+		sr_et_tau[idx] = 0;
+		sr_et_tau_Iso[idx] = 0;
+		sr_idx[idx] = 0;
 	}
 
 	label0: for (int idx = 0; idx < NR_CNTR_REG; idx++)
@@ -165,13 +174,16 @@ void tau(ap_uint<10> tau_seed, ap_ufixed<7, 1, AP_RND, AP_SAT> tau_IsoFact,
 			sr_et[sidx] = regions[idx].et;
 			nonIso_tau_et[sidx] = et_tau;
 			Iso_tau_et[sidx] = et_tau_Iso;
-			sr_et_tau = et_tau;
-			sr_et_tau_Iso = et_tau_Iso;
+			rIdx[sidx] = idx;
+			sr_et_tau[sidx] = et_tau;
+			sr_et_tau_Iso[sidx] = et_tau_Iso;
+			sr_idx[sidx] = idx;
 		}
 		else
 		{
-			nonIso_tau_et[sidx] = sr_et_tau;
-			Iso_tau_et[sidx] = sr_et_tau_Iso;
+			nonIso_tau_et[sidx] = sr_et_tau[sidx];
+			Iso_tau_et[sidx] = sr_et_tau_Iso[sidx];
+			rIdx[sidx] = sr_idx[sidx];
 		}
 	}
 	return;

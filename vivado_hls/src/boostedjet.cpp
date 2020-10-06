@@ -48,7 +48,8 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 			  ap_uint<10> et_3by3[NR_CNTR_REG], // input 14x18
 			  ap_uint<10> et_jet [NR_SCNTR_REG], // *output* 7x9
 			  bitset<3> rEta_jet [NR_SCNTR_REG],
-			  bitset<3> rPhi_jet [NR_SCNTR_REG])
+			  bitset<3> rPhi_jet [NR_SCNTR_REG],
+			  ap_uint<8> rIdx    [NR_SCNTR_REG])
  
 {
 
@@ -56,22 +57,25 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 	ap_uint<10> sr_et[NR_SCNTR_REG];
 	bitset<3> sr_eta[NR_SCNTR_REG];
 	bitset<3> sr_phi[NR_SCNTR_REG];
+	ap_uint<8> sr_idx[NR_SCNTR_REG];
 	bool activeRegion[9];
 
 #pragma HLS INTERFACE ap_none port=jet_seed
 
 #pragma HLS PIPELINE II=3 // target clk freq = 120 MHz
 
-#pragma HLS ARRAY_RESHAPE  variable=regions   complete  dim=1
-#pragma HLS ARRAY_RESHAPE  variable=et_3by3   complete  dim=1
-#pragma HLS ARRAY_RESHAPE  variable=et_jet    complete  dim=1
-#pragma HLS ARRAY_RESHAPE  variable=rEta_jet  complete  dim=1
-#pragma HLS ARRAY_RESHAPE  variable=rPhi_jet  complete  dim=1
-#pragma HLS ARRAY_RESHAPE  variable=jet_veto  complete  dim=1
-#pragma HLS ARRAY_RESHAPE  variable=activeRegion complete  dim=1
-#pragma HLS ARRAY_PARTITION  variable=sr_et     complete  dim=1
-#pragma HLS ARRAY_PARTITION  variable=sr_eta    complete  dim=1
-#pragma HLS ARRAY_PARTITION  variable=sr_phi    complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=regions   complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=et_3by3   complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=et_jet    complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=rEta_jet  complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=rPhi_jet  complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=rIdx      complete  dim=1
+#pragma HLS ARRAY_RESHAPE variable=jet_veto  complete  dim=1
+#pragma HLS ARRAY_RESHAPE variable=activeRegion complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=sr_et     complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=sr_eta    complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=sr_phi    complete  dim=1
+#pragma HLS ARRAY_PARTITION variable=sr_idx    complete  dim=1
 #pragma HLS inline region
 
 	for (int idx = 0; idx < NR_SCNTR_REG; idx++)
@@ -80,6 +84,7 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 		sr_et[idx] = 0;
 		sr_eta[idx] = 0;
 		sr_phi[idx] = 0;
+		sr_idx[idx] = 0;
 	}
 
 	loop_rgn_et: for (int idx = 0; idx < NR_CNTR_REG; idx++)
@@ -212,16 +217,18 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 				else activeRegion[2] = false;
 				rEta_jet[sidx] = etapattern(activeRegion);
 				rPhi_jet[sidx] = phipattern(activeRegion);
+				rIdx[sidx] = idx;
 				sr_eta[sidx] = rEta_jet[sidx];
 				sr_phi[sidx] = rPhi_jet[sidx];
+				sr_idx[sidx] = idx;
 			}
 
 			else {
 				et_jet[sidx] = sr_et[sidx];
 				rEta_jet[sidx] = sr_eta[sidx];
 				rPhi_jet[sidx] = sr_phi[sidx];
+				rIdx[sidx] = sr_idx[sidx];
 			}
-
 		}
 	}
 	return;
