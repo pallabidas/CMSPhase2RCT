@@ -11,6 +11,7 @@ bitset<3> etapattern(bool activeRegion[9])
 {
 #pragma HLS PIPELINE II=1
 #pragma HLS ARRAY_RESHAPE  variable=activeRegion complete  dim=1
+#pragma HLS inline
 
 	bitset<3> rEta;
 	for(int iEta = 0; iEta < 3; iEta++){
@@ -29,6 +30,7 @@ bitset<3> phipattern(bool activeRegion[9])
 {
 #pragma HLS PIPELINE II=1
 #pragma HLS ARRAY_RESHAPE  variable=activeRegion complete  dim=1
+#pragma HLS inline
 
 	bitset<3> rPhi;
 	for(int iPhi = 0; iPhi < 3; iPhi++){
@@ -49,7 +51,7 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 			  ap_uint<10> et_jet [NR_SCNTR_REG], // *output* 7x9
 			  bitset<3> rEta_jet [NR_SCNTR_REG],
 			  bitset<3> rPhi_jet [NR_SCNTR_REG],
-			  ap_uint<8> rIdx    [NR_SCNTR_REG])
+			  ap_uint<9> rIdx_boostedjet[NR_SCNTR_REG])
  
 {
 
@@ -57,26 +59,26 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 	ap_uint<10> sr_et[NR_SCNTR_REG];
 	bitset<3> sr_eta[NR_SCNTR_REG];
 	bitset<3> sr_phi[NR_SCNTR_REG];
-	ap_uint<8> sr_idx[NR_SCNTR_REG];
+	ap_uint<9> sr_idx[NR_SCNTR_REG];
 	bool activeRegion[9];
 
 #pragma HLS INTERFACE ap_none port=jet_seed
 
 #pragma HLS PIPELINE II=3 // target clk freq = 120 MHz
 
-#pragma HLS ARRAY_PARTITION variable=regions   complete  dim=1
-#pragma HLS ARRAY_PARTITION variable=et_3by3   complete  dim=1
-#pragma HLS ARRAY_PARTITION variable=et_jet    complete  dim=1
-#pragma HLS ARRAY_PARTITION variable=rEta_jet  complete  dim=1
-#pragma HLS ARRAY_PARTITION variable=rPhi_jet  complete  dim=1
-#pragma HLS ARRAY_PARTITION variable=rIdx      complete  dim=1
-#pragma HLS ARRAY_RESHAPE variable=jet_veto  complete  dim=1
-#pragma HLS ARRAY_RESHAPE variable=activeRegion complete  dim=1
-#pragma HLS ARRAY_PARTITION variable=sr_et     complete  dim=1
-#pragma HLS ARRAY_PARTITION variable=sr_eta    complete  dim=1
-#pragma HLS ARRAY_PARTITION variable=sr_phi    complete  dim=1
-#pragma HLS ARRAY_PARTITION variable=sr_idx    complete  dim=1
-#pragma HLS inline region
+#pragma HLS ARRAY_RESHAPE  variable=regions   complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=et_3by3   complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=et_jet    complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=rEta_jet  complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=rPhi_jet  complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=rIdx_boostedjet      complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=jet_veto  complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=activeRegion complete  dim=1
+#pragma HLS ARRAY_PARTITION  variable=sr_et     complete  dim=1
+#pragma HLS ARRAY_PARTITION  variable=sr_eta    complete  dim=1
+#pragma HLS ARRAY_PARTITION  variable=sr_phi    complete  dim=1
+#pragma HLS ARRAY_PARTITION  variable=sr_idx    complete  dim=1
+#pragma HLS inline
 
 	for (int idx = 0; idx < NR_SCNTR_REG; idx++)
 	{
@@ -196,7 +198,7 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 			// assign et_jet and pattern
 			if (jet_veto[idx] == false && et_3by3[idx] > sr_et[sidx]){
 				sr_et[sidx] = et_3by3[idx];
-				et_jet[sidx] = et_3by3[idx];
+				sr_idx[sidx] = idx;
 				if (!tauveto_C && et_C > 30 && et_C > (et_jet[sidx] >> 4)) activeRegion[4] = true;
 				else activeRegion[4] = false;
 				if (!tauveto_N && et_N > 30 && et_N > (et_jet[sidx] >> 4)) activeRegion[3] = true;
@@ -215,21 +217,20 @@ void boostedjet(ap_uint<10> jet_seed,             // input
 				else activeRegion[8] = false;
 				if (!tauveto_SE && et_SE > 30 && et_SE > (et_jet[sidx] >> 4)) activeRegion[2] = true;
 				else activeRegion[2] = false;
-				rEta_jet[sidx] = etapattern(activeRegion);
-				rPhi_jet[sidx] = phipattern(activeRegion);
-				rIdx[sidx] = idx;
-				sr_eta[sidx] = rEta_jet[sidx];
-				sr_phi[sidx] = rPhi_jet[sidx];
-				sr_idx[sidx] = idx;
-			}
-
-			else {
-				et_jet[sidx] = sr_et[sidx];
-				rEta_jet[sidx] = sr_eta[sidx];
-				rPhi_jet[sidx] = sr_phi[sidx];
-				rIdx[sidx] = sr_idx[sidx];
+				sr_eta[sidx] = etapattern(activeRegion);
+				sr_phi[sidx] = phipattern(activeRegion);
 			}
 		}
 	}
+
+	for (int idx = 0; idx < NR_SCNTR_REG; idx++)
+	{
+#pragma HLS UNROLL
+		et_jet[idx] = sr_et[idx];
+		rEta_jet[idx] = sr_eta[idx];
+		rPhi_jet[idx] = sr_phi[idx];
+		rIdx_boostedjet[idx] = sr_idx[idx];
+	}
+
 	return;
 }
