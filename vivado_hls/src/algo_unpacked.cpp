@@ -99,45 +99,38 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 	ap_uint<10> et_3by3_calo[NR_CALO_REG];
 	
 	ap_uint<10> et_jet_calo[NR_SUPER_REG];
-	ap_uint<9> idx_jet[NR_SUPER_REG];
+	ap_uint<9> rIdx_jet[NR_SUPER_REG];
 	
 	ap_uint<10> et_3by3_cntr[NR_CNTR_REG];
 
 	ap_uint<10> et_jet_boosted[NR_SCNTR_REG];
 	bitset<3>  rEta_jet_boosted[NR_SCNTR_REG];
 	bitset<3>  rPhi_jet_boosted[NR_SCNTR_REG];
-	ap_uint<9> idx_boostedjet[NR_SCNTR_REG];
+	ap_uint<9> rIdx_boostedjet[NR_SCNTR_REG];
 	
 	ap_uint<10> nonIso_egamma_et[NR_SCNTR_REG];
 	ap_uint<10> Iso_egamma_et[NR_SCNTR_REG];
-	ap_uint<9> idx_egamma[NR_SCNTR_REG];
+	ap_uint<9> rIdx_egamma[NR_SCNTR_REG];
 	
 	ap_uint<10> nonIso_tau_et[NR_SCNTR_REG];
 	ap_uint<10> Iso_tau_et[NR_SCNTR_REG];
-	ap_uint<9> idx_tau[NR_SCNTR_REG];
+	ap_uint<9> rIdx_tau[NR_SCNTR_REG];
 
 ////////////////////////////////////////////////////////////
-	// Sort Objects (SO) , inputs and outputs
-	t_so so_in_jet_cr[64];
-	//t_so so_out_jet_cr[8];
+	// Sort Objects (SO) , inputs
+	t_so so_in_jet_cr[16];
 
-	t_so so_in_jet_fwd[64];
-	//t_so so_out_jet_fwd[8];
+	t_so so_in_jet_fwd[16];
 
-	t_so so_in_jet_boosted[64];
-	//t_so so_out_jet_boosted[8];
+	t_so so_in_jet_boosted[16];
 
-	t_so so_in_tau_noniso[64];
-	//t_so so_out_tau_noniso[8];
+	t_so so_in_tau_noniso[16];
 
-	t_so so_in_tau_iso[64];
-	//t_so so_out_tau_iso[8];
+	t_so so_in_tau_iso[16];
 
-	t_so so_in_eg_noniso[64];
-	//t_so so_out_eg_noniso[8];
+	t_so so_in_eg_noniso[16];
 
-	t_so so_in_eg_iso[64];
-	//t_so so_out_eg_iso[8];
+	t_so so_in_eg_iso[16];
 
 ////////////////////////////////////////////////////////////
 
@@ -172,38 +165,31 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 #pragma HLS ARRAY_RESHAPE variable=centr_region_pu_sub complete dim=1
 
 #pragma HLS ARRAY_RESHAPE variable=so_in_jet_cr complete dim=0
-//#pragma HLS ARRAY_RESHAPE variable=so_out_jet_cr complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_in_jet_fwd complete dim=0
-//#pragma HLS ARRAY_RESHAPE variable=so_out_jet_fwd complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_in_jet_boosted complete dim=0
-//#pragma HLS ARRAY_RESHAPE variable=so_out_jet_boosted complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_in_tau_noniso complete dim=0
-//#pragma HLS ARRAY_RESHAPE variable=so_out_tau_noniso complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_in_tau_iso complete dim=0
-//#pragma HLS ARRAY_RESHAPE variable=so_out_tau_iso complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_in_eg_noniso complete dim=0
-//#pragma HLS ARRAY_RESHAPE variable=so_out_eg_noniso complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=so_in_eg_iso complete dim=0
-//#pragma HLS ARRAY_RESHAPE variable=so_out_eg_iso complete dim=0
 
 #pragma HLS ARRAY_RESHAPE variable=et_calo complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=pu_sub_et_calo complete dim=0
 
 #pragma HLS ARRAY_RESHAPE variable=et_jet_calo complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=idx_jet complete dim=0
+#pragma HLS ARRAY_RESHAPE variable=rIdx_jet complete dim=0
 
 #pragma HLS ARRAY_RESHAPE variable=et_jet_boosted complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=rEta_jet_boosted complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=rPhi_jet_boosted complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=idx_boostedjet complete dim=0
+#pragma HLS ARRAY_RESHAPE variable=rIdx_boostedjet complete dim=0
 
 #pragma HLS ARRAY_RESHAPE variable=nonIso_egamma_et complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=Iso_egamma_et complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=idx_egamma complete dim=0
+#pragma HLS ARRAY_RESHAPE variable=rIdx_egamma complete dim=0
 
 #pragma HLS ARRAY_RESHAPE variable=nonIso_tau_et complete dim=0
 #pragma HLS ARRAY_RESHAPE variable=Iso_tau_et complete dim=0
-#pragma HLS ARRAY_RESHAPE variable=idx_tau complete dim=0
+#pragma HLS ARRAY_RESHAPE variable=rIdx_tau complete dim=0
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -295,69 +281,35 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 
 
 	// Jet algorithm
-	jet(algo_config.jet_seed, pu_sub_et_calo, et_3by3_calo, et_jet_calo, idx_jet);
-	boostedjet(algo_config.jet_seed, centr_region_pu_sub, et_3by3_cntr, et_jet_boosted, rEta_jet_boosted, rPhi_jet_boosted, idx_boostedjet);
+	jet(algo_config.jet_seed, pu_sub_et_calo, et_3by3_calo, et_jet_calo, rIdx_jet);
+	boostedjet(algo_config.jet_seed, centr_region_pu_sub, et_3by3_cntr, et_jet_boosted, rEta_jet_boosted, rPhi_jet_boosted, rIdx_boostedjet);
 
 	// e-gamma algorithm
-	egamma(algo_config.egamma_seed, algo_config.egamma_IsoFact, centr_region_pu_sub, et_3by3_cntr, nonIso_egamma_et, Iso_egamma_et, idx_egamma);
+	egamma(algo_config.egamma_seed, algo_config.egamma_IsoFact, centr_region_pu_sub, et_3by3_cntr, nonIso_egamma_et, Iso_egamma_et, rIdx_egamma);
 
 	// Tau algorithm
-	tau(algo_config.tau_seed, algo_config.tau_IsoFact, centr_region_pu_sub, et_3by3_cntr, nonIso_tau_et, Iso_tau_et, idx_tau);
+	tau(algo_config.tau_seed, algo_config.tau_IsoFact, centr_region_pu_sub, et_3by3_cntr, nonIso_tau_et, Iso_tau_et, rIdx_tau);
 
 ////////////////////////////////////////////////////////////
-	// Prepare algorithm results for sorting
-	// so_in_x : sort object input
-	// so_out_x: sort object output
-	for (unsigned int phi = 0; phi < 9; phi++)
+	// Prepare algorithm results
+
+	for (int idx = 0; idx < 16; idx++)
 	{
 #pragma HLS UNROLL
-		for (int reg = 0; reg < 13; reg++)
-		{
-#pragma HLS UNROLL
-			int idx_in = 13 * phi + reg; // full super-region calo index (0-116)
-			int idx_jet_in = idx_jet[idx_in];
-			//int idx = region_centr_fwd[idx_jet_in];
+		int idx_jet = rIdx_jet[idx];
+		so_in_jet_fwd[idx].et = et_jet_calo[idx];
+		so_in_jet_fwd[idx].idx = idx_jet;
+		so_in_jet_fwd[idx].rloc_phi = calo_regions[idx_jet].rloc_phi;
+		so_in_jet_fwd[idx].rloc_eta = calo_regions[idx_jet].rloc_eta;
 
-			if (reg < 3)
-			{
-				int idx_out = 6 * phi + reg; // forward super-region index (0-53)
+		int idx_cr = idx + 16;
+		int idx_jet_cr = rIdx_jet[idx_cr];
+		so_in_jet_cr[idx].et = et_jet_calo[idx_cr];
+		so_in_jet_cr[idx].idx = idx_jet_cr;
+		so_in_jet_cr[idx].rloc_phi = calo_regions[idx_jet_cr].rloc_phi;
+		so_in_jet_cr[idx].rloc_eta = calo_regions[idx_jet_cr].rloc_eta;
 
-				so_in_jet_fwd[idx_out].et = et_jet_calo[idx_in];
-				so_in_jet_fwd[idx_out].idx = idx_jet_in;
-				so_in_jet_fwd[idx_out].rloc_phi = calo_regions[idx_jet_in].rloc_phi;
-				so_in_jet_fwd[idx_out].rloc_eta = calo_regions[idx_jet_in].rloc_eta;
-				//so_in_jet_fwd[idx_out].rloc_phi = fwd_region[idx].rloc_phi;
-				//so_in_jet_fwd[idx_out].rloc_eta = fwd_region[idx].rloc_eta;
-			}
-			else if (reg > 9)
-			{
-				int idx_out = 6 * phi - 7 + reg; // forward super-region index (0-53)
-
-				so_in_jet_fwd[idx_out].et = et_jet_calo[idx_in];
-				so_in_jet_fwd[idx_out].idx = idx_jet_in;
-				so_in_jet_fwd[idx_out].rloc_phi = calo_regions[idx_jet_in].rloc_phi;
-				so_in_jet_fwd[idx_out].rloc_eta = calo_regions[idx_jet_in].rloc_eta;
-				//so_in_jet_fwd[idx_out].rloc_phi = fwd_region[idx].rloc_phi;
-				//so_in_jet_fwd[idx_out].rloc_eta = fwd_region[idx].rloc_eta;
-			}
-			else
-			{
-				int idx_out = 7 * phi - 3 + reg; // central super-region index (0-62)
-
-				so_in_jet_cr[idx_out].et = et_jet_calo[idx_in];
-				so_in_jet_cr[idx_out].idx = idx_jet_in;
-				so_in_jet_cr[idx_out].rloc_phi = calo_regions[idx_jet_in].rloc_phi;
-				so_in_jet_cr[idx_out].rloc_eta = calo_regions[idx_jet_in].rloc_eta;
-				//so_in_jet_cr[idx_out].rloc_phi = centr_region[idx].rloc_phi;
-				//so_in_jet_cr[idx_out].rloc_eta = centr_region[idx].rloc_eta;
-			}
-		}
-	}
-
-	for (int idx = 0; idx < 63; idx++)
-	{
-#pragma HLS UNROLL
-		int idx_egamma_in = idx_egamma[idx];
+		int idx_egamma_in = rIdx_egamma[idx];
 		so_in_eg_noniso[idx].et = nonIso_egamma_et[idx];
 		so_in_eg_noniso[idx].idx = idx_egamma_in;
 		so_in_eg_noniso[idx].rloc_phi = centr_region[idx_egamma_in].rloc_phi;
@@ -368,7 +320,7 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		so_in_eg_iso[idx].rloc_phi = centr_region[idx_egamma_in].rloc_phi;
 		so_in_eg_iso[idx].rloc_eta = centr_region[idx_egamma_in].rloc_eta;
 
-		int idx_tau_in = idx_tau[idx];
+		int idx_tau_in = rIdx_tau[idx];
 		so_in_tau_noniso[idx].et = nonIso_tau_et[idx];
 		so_in_tau_noniso[idx].idx = idx_tau_in;
 		so_in_tau_noniso[idx].rloc_phi = centr_region[idx_tau_in].rloc_phi;
@@ -379,73 +331,15 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		so_in_tau_iso[idx].rloc_phi = centr_region[idx_tau_in].rloc_phi;
 		so_in_tau_iso[idx].rloc_eta = centr_region[idx_tau_in].rloc_eta;
 
-		int idx_jet_in = idx_boostedjet[idx];
+		int idx_jet_in = rIdx_boostedjet[idx];
 		so_in_jet_boosted[idx].et = et_jet_boosted[idx];
 		so_in_jet_boosted[idx].idx = idx_jet_in;
 		so_in_jet_boosted[idx].rloc_phi = centr_region[idx_jet_in].rloc_phi;
 		so_in_jet_boosted[idx].rloc_eta = centr_region[idx_jet_in].rloc_eta;
 	}
 
-	for (int idx = 54; idx < 64; idx++)
-	{
-#pragma HLS UNROLL
-
-		so_in_jet_fwd[idx].et = 0;
-		so_in_jet_fwd[idx].idx = 0;
-		so_in_jet_fwd[idx].rloc_phi = 0;
-		so_in_jet_fwd[idx].rloc_eta = 0;
-	}
-
-	for (int idx = 63; idx < 64; idx++)
-	{
-#pragma HLS UNROLL
-
-		so_in_jet_cr[idx].et = 0;
-		so_in_jet_cr[idx].idx = 0;
-		so_in_jet_cr[idx].rloc_phi = 0;
-		so_in_jet_cr[idx].rloc_eta = 0;
-
-		so_in_eg_noniso[idx].et = 0;
-		so_in_eg_noniso[idx].idx = 0;
-		so_in_eg_noniso[idx].rloc_phi = 0;
-		so_in_eg_noniso[idx].rloc_eta = 0;
-
-		so_in_eg_iso[idx].et = 0;
-		so_in_eg_iso[idx].idx = 0;
-		so_in_eg_iso[idx].rloc_phi = 0;
-		so_in_eg_iso[idx].rloc_eta = 0;
-
-		so_in_tau_noniso[idx].et = 0;
-		so_in_tau_noniso[idx].idx = 0;
-		so_in_tau_noniso[idx].rloc_phi = 0;
-		so_in_tau_noniso[idx].rloc_eta = 0;
-
-		so_in_tau_iso[idx].et = 0;
-		so_in_tau_iso[idx].idx = 0;
-		so_in_tau_iso[idx].rloc_phi = 0;
-		so_in_tau_iso[idx].rloc_eta = 0;
-
-		so_in_jet_boosted[idx].et = 0;
-		so_in_jet_boosted[idx].idx = 0;
-		so_in_jet_boosted[idx].rloc_phi = 0;
-		so_in_jet_boosted[idx].rloc_eta = 0;
-	}
-
-////////////////////////////////////////////////////////////
-	// Do the actual sorting
-	//am_sort_256x8(so_in_jet_cr, so_out_jet_cr);
-	//am_sort_256x8(so_in_jet_fwd, so_out_jet_fwd);
-	//am_sort_256x8(so_in_jet_boosted, so_out_jet_boosted);
-
-	//am_sort_256x8(so_in_eg_noniso, so_out_eg_noniso);
-	//am_sort_256x8(so_in_eg_iso, so_out_eg_iso);
-
-	//am_sort_256x8(so_in_tau_noniso, so_out_tau_noniso);
-	//am_sort_256x8(so_in_tau_iso, so_out_tau_iso);
-
-////////////////////////////////////////////////////////////
-	// Assign the top 8 candidates to algorithnm outputs
-	for (int idx = 0; idx < 8; idx++)
+	// Assign the algorithnm outputs
+	for (int idx = 0; idx < 16; idx++)
 	{
 #pragma HLS UNROLL
 		ap_uint<1> side;
@@ -453,11 +347,9 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		ap_uint<6> ieta;
 
 
-		{ // Central + Boosted Jets
+		{ // Central Jets
 			int bLo1 = 16;
 			int bHi1 = bLo1 + 10; // 11 bits
-			//tmp_link_out[idx].range(bHi1, bLo1) = so_out_jet_cr[idx].et;
-			//idx_srt = so_out_jet_cr[idx].idx;
 			tmp_link_out[idx].range(bHi1, bLo1) = so_in_jet_cr[idx].et;
 			idx_srt = so_in_jet_cr[idx].idx;
 
@@ -468,16 +360,13 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 
 			int bLo3 = bHi2 + 1;
 			int bHi3 = bLo3 + 6; // 7 bits
-			//tmp_link_out[idx].range(bHi3, bLo3) = calo_coor_full[idx_srt].iphi + so_out_jet_cr[idx].rloc_phi;
 			tmp_link_out[idx].range(bHi3, bLo3) = calo_coor_full[idx_srt].iphi + so_in_jet_cr[idx].rloc_phi;
 
 			int bLo4 = bHi3 + 1;
 			int bHi4 = bLo4 + 5; // 6 bits
 			if (side == 1)
-				//tmp_link_out[idx].range(bHi4, bLo4) = calo_coor_full[idx_srt].ieta - so_out_jet_cr[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi4, bLo4) = calo_coor_full[idx_srt].ieta - so_in_jet_cr[idx].rloc_eta;
 			else
-				//tmp_link_out[idx].range(bHi4, bLo4) = calo_coor_full[idx_srt].ieta + so_out_jet_cr[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi4, bLo4) = calo_coor_full[idx_srt].ieta + so_in_jet_cr[idx].rloc_eta;
 
 			if((double)tmp_link_out[idx].range(bHi1, bLo1) > 0) cout << "Jet CR " << idx << " ET: " << dec << tmp_link_out[idx].range(bHi1, bLo1) << " Side: " << tmp_link_out[idx].range(bHi2, bLo2) << " iPhi: " << tmp_link_out[idx].range(bHi3, bLo3)  << " iEta: " << tmp_link_out[idx].range(bHi4, bLo4) << endl ;
@@ -486,8 +375,6 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		{ // Forward Jets
 			int bLo5 = 16 + 25 + 1;
 			int bHi5 = bLo5 + 10;
-			//tmp_link_out[idx].range(bHi5, bLo5) = so_out_jet_fwd[idx].et;
-			//idx_srt = so_out_jet_fwd[idx].idx;
 			tmp_link_out[idx].range(bHi5, bLo5) = so_in_jet_fwd[idx].et;
 			idx_srt = so_in_jet_fwd[idx].idx;
 
@@ -498,16 +385,13 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 
 			int bLo7 = bHi6 + 1;
 			int bHi7 = bLo7 + 6; 
-			//tmp_link_out[idx].range(bHi7, bLo7) = calo_coor_full[idx_srt].iphi + so_out_jet_fwd[idx].rloc_phi;
 			tmp_link_out[idx].range(bHi7, bLo7) = calo_coor_full[idx_srt].iphi + so_in_jet_fwd[idx].rloc_phi;
 
 			int bLo8 = bHi7 + 1;
 			int bHi8 = bLo8 + 5;
 			if (side == 1)
-				//tmp_link_out[idx].range(bHi8, bLo8) = calo_coor_full[idx_srt].ieta - so_out_jet_fwd[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi8, bLo8) = calo_coor_full[idx_srt].ieta - so_in_jet_fwd[idx].rloc_eta;
 			else
-				//tmp_link_out[idx].range(bHi8, bLo8) = calo_coor_full[idx_srt].ieta + so_out_jet_fwd[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi8, bLo8) = calo_coor_full[idx_srt].ieta + so_in_jet_fwd[idx].rloc_eta;
 
 			if((double)tmp_link_out[idx].range(bHi5, bLo5) > 0) cout << "Jet FWD " << idx << " ET: " << dec << tmp_link_out[idx].range(bHi5, bLo5) << " Side: " << tmp_link_out[idx].range(bHi6, bLo6) << " iPhi: " << tmp_link_out[idx].range(bHi7, bLo7)  << " iEta: " << tmp_link_out[idx].range(bHi8, bLo8) << endl ;
@@ -516,8 +400,6 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		{ // Boosted jets
 			int bLo9 = 16 + 25 + 25 + 1;
 			int bHi9 = bLo9 + 10;
-			//tmp_link_out[idx].range(bHi9, bLo9) = so_out_jet_boosted[idx].et;
-			//idx_srt = so_out_jet_boosted[idx].idx;
 			tmp_link_out[idx].range(bHi9, bLo9) = so_in_jet_boosted[idx].et;
 			idx_srt = so_in_jet_boosted[idx].idx;
 			
@@ -528,16 +410,13 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 	
 			int bLo11 = bHi10 + 1;
 			int bHi11 = bLo11 + 6;
-			//tmp_link_out[idx].range(bHi11, bLo11) = calo_coor[idx_srt].iphi + so_out_jet_boosted[idx].rloc_phi;
 			tmp_link_out[idx].range(bHi11, bLo11) = calo_coor[idx_srt].iphi + so_in_jet_boosted[idx].rloc_phi;
 
 			int bLo12 = bHi11 + 1;
 			int bHi12 = bLo12 + 5;
 			if (side == 1)
-				//tmp_link_out[idx].range(bHi12, bLo12) = calo_coor[idx_srt].ieta - so_out_jet_boosted[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi12, bLo12) = calo_coor[idx_srt].ieta - so_in_jet_boosted[idx].rloc_eta;
 			else
-				//tmp_link_out[idx].range(bHi12, bLo12) = calo_coor[idx_srt].ieta + so_out_jet_boosted[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi12, bLo12) = calo_coor[idx_srt].ieta + so_in_jet_boosted[idx].rloc_eta;
 
 			int bLo13 = bHi12 + 1;
@@ -548,15 +427,12 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 			int bHi14 = bLo14 + 2;
 			tmp_link_out[idx].range(bHi14, bLo14) = rEta_jet_boosted[idx].to_ulong();
 
-			//if((double)tmp_link_out[idx].range(bHi9, bLo9) > 0) cout << "Jet Boosted " << idx << " ET: " << dec << tmp_link_out[idx].range(bHi9, bLo9) << " Side: " << tmp_link_out[idx].range(bHi10, bLo10) << " iPhi: " << tmp_link_out[idx].range(bHi11, bLo11)  << " iEta: " << tmp_link_out[idx].range(bHi12, bLo12) << " rPhi: " << tmp_link_out[idx].range(bHi13, bLo13).to_ulong() << " (" << rPhi_jet_boosted[idx_srt].to_string() << ") " << " rEta: " << tmp_link_out[idx].range(bHi14, bLo14).to_ulong() << " (" << rEta_jet_boosted[idx_srt].to_string() << ") " << endl ; 
 			if((double)tmp_link_out[idx].range(bHi9, bLo9) > 0) cout << "Jet Boosted " << idx << " ET: " << dec << tmp_link_out[idx].range(bHi9, bLo9) << " Side: " << tmp_link_out[idx].range(bHi10, bLo10) << " iPhi: " << tmp_link_out[idx].range(bHi11, bLo11)  << " iEta: " << tmp_link_out[idx].range(bHi12, bLo12) << " rPhi: " << tmp_link_out[idx].range(bHi13, bLo13).to_ulong() << " rEta: " << tmp_link_out[idx].range(bHi14, bLo14).to_ulong() << endl;
 		}
 
 		{ // EG NonIso
 			int bLo15 = 16 + 25 + 25 + 31 + 1;
 			int bHi15 = bLo15 + 8;
-			//tmp_link_out[idx].range(bHi15, bLo15) = so_out_eg_noniso[idx].et;
-			//idx_srt = so_out_eg_noniso[idx].idx;
 			tmp_link_out[idx].range(bHi15, bLo15) = so_in_eg_noniso[idx].et;
 			idx_srt = so_in_eg_noniso[idx].idx;
 
@@ -567,16 +443,13 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 
 			int bLo17 = bHi16 + 1;
 			int bHi17 = bLo17 + 6;
-			//tmp_link_out[idx].range(bHi17, bLo17) = calo_coor[idx_srt].iphi + so_out_eg_noniso[idx].rloc_phi;
 			tmp_link_out[idx].range(bHi17, bLo17) = calo_coor[idx_srt].iphi + so_in_eg_noniso[idx].rloc_phi;
 
 			int bLo18 = bHi17 + 1;
 			int bHi18 = bLo18 + 5;
 			if (side == 1)
-				//tmp_link_out[idx].range(bHi18, bLo18) = calo_coor[idx_srt].ieta - so_out_eg_noniso[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi18, bLo18) = calo_coor[idx_srt].ieta - so_in_eg_noniso[idx].rloc_eta;
 			else
-				//tmp_link_out[idx].range(bHi18, bLo18) = calo_coor[idx_srt].ieta + so_out_eg_noniso[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi18, bLo18) = calo_coor[idx_srt].ieta + so_in_eg_noniso[idx].rloc_eta;
 
 			if((double)tmp_link_out[idx].range(bHi15, bLo15) > 0) cout << "EG NonIso " << idx << " ET: " << dec << tmp_link_out[idx].range(bHi15, bLo15) << " Side: " << tmp_link_out[idx].range(bHi16, bLo16) << " iPhi: " << tmp_link_out[idx].range(bHi17, bLo17)  << " iEta: " << tmp_link_out[idx].range(bHi18, bLo18) << endl ;
@@ -585,8 +458,6 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		{ //EG ISO
 			int bLo19 = 16 + 25 + 25 + 31 + 23 + 1;
 			int bHi19 = bLo19 + 8;
-			//tmp_link_out[idx].range(bHi19, bLo19) = so_out_eg_iso[idx].et;
-			//idx_srt = so_out_eg_iso[idx].idx;
 			tmp_link_out[idx].range(bHi19, bLo19) = so_in_eg_iso[idx].et;
 			idx_srt = so_in_eg_iso[idx].idx;
 
@@ -597,16 +468,13 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 
 			int bLo21 = bHi20 + 1;
 			int bHi21 = bLo21 + 6;
-			//tmp_link_out[idx].range(bHi21, bLo21) = calo_coor[idx_srt].iphi + so_out_eg_iso[idx].rloc_phi;
 			tmp_link_out[idx].range(bHi21, bLo21) = calo_coor[idx_srt].iphi + so_in_eg_iso[idx].rloc_phi;
 
 			int bLo22 = bHi21 + 1;
 			int bHi22 = bLo22 + 5;
 			if (side == 1)
-				//tmp_link_out[idx].range(bHi22, bLo22) = calo_coor[idx_srt].ieta - so_out_eg_iso[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi22, bLo22) = calo_coor[idx_srt].ieta - so_in_eg_iso[idx].rloc_eta;
 			else
-				//tmp_link_out[idx].range(bHi22, bLo22) = calo_coor[idx_srt].ieta + so_out_eg_iso[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi22, bLo22) = calo_coor[idx_srt].ieta + so_in_eg_iso[idx].rloc_eta;
 
 			if((double)tmp_link_out[idx].range(bHi19, bLo19) > 0) cout << "EG Iso " << idx << " ET: " << dec << tmp_link_out[idx].range(bHi19, bLo19) << " Side: " << tmp_link_out[idx].range(bHi20, bLo20) << " iPhi: " << tmp_link_out[idx].range(bHi21, bLo21)  << " iEta: " << tmp_link_out[idx].range(bHi22, bLo22) << endl ;
@@ -615,8 +483,6 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		{ // Tau NonIso
 			int bLo23 = 16 + 25 + 25 + 31 + 23 + 23 + 1;
 			int bHi23 = bLo23 + 8;
-			//tmp_link_out[idx].range(bHi23, bLo23) = so_out_tau_noniso[idx].et;
-			//idx_srt = so_out_tau_noniso[idx].idx;
 			tmp_link_out[idx].range(bHi23, bLo23) = so_in_tau_noniso[idx].et;
 			idx_srt = so_in_tau_noniso[idx].idx;
 
@@ -627,16 +493,13 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 
 			int bLo25 = bHi24 + 1;
 			int bHi25 = bLo25 + 6;
-			//tmp_link_out[idx].range(bHi25, bLo25) = calo_coor[idx_srt].iphi + so_out_tau_noniso[idx].rloc_phi;
 			tmp_link_out[idx].range(bHi25, bLo25) = calo_coor[idx_srt].iphi + so_in_tau_noniso[idx].rloc_phi;
 
 			int bLo26 = bHi25 + 1;
 			int bHi26 = bLo26 + 5;
 			if (side == 1)
-				//tmp_link_out[idx].range(bHi26, bLo26) = calo_coor[idx_srt].ieta - so_out_tau_noniso[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi26, bLo26) = calo_coor[idx_srt].ieta - so_in_tau_noniso[idx].rloc_eta;
 			else
-				//tmp_link_out[idx].range(bHi26, bLo26) = calo_coor[idx_srt].ieta + so_out_tau_noniso[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi26, bLo26) = calo_coor[idx_srt].ieta + so_in_tau_noniso[idx].rloc_eta;
 
 			if((double)tmp_link_out[idx].range(bHi23, bLo23) > 0) cout << "Tau NonIso " << idx << " ET: " << dec << tmp_link_out[idx].range(bHi23, bLo23) << " Side: " << tmp_link_out[idx].range(bHi24, bLo24) << " iPhi: " << tmp_link_out[idx].range(bHi25, bLo25)  << " iEta: " << tmp_link_out[idx].range(bHi26, bLo26) << endl ;
@@ -645,8 +508,6 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		{ //Tau ISO
 			int bLo27 = 16 + 25 + 25 + 31 + 23 + 23 + 23 + 1;
 			int bHi27 = bLo27 + 8;
-			//tmp_link_out[idx].range(bHi27, bLo27) = so_out_tau_iso[idx].et;
-			//idx_srt = so_out_tau_iso[idx].idx;
 			tmp_link_out[idx].range(bHi27, bLo27) = so_in_tau_iso[idx].et;
 			idx_srt = so_in_tau_iso[idx].idx;
 
@@ -657,16 +518,13 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 
 			int bLo29 = bHi28 + 1;
 			int bHi29 = bLo29 + 6;
-			//tmp_link_out[idx].range(bHi29, bLo29) = calo_coor[idx_srt].iphi + so_out_tau_iso[idx].rloc_phi;
 			tmp_link_out[idx].range(bHi29, bLo29) = calo_coor[idx_srt].iphi + so_in_tau_iso[idx].rloc_phi;
 
 			int bLo30 = bHi29 + 1;
 			int bHi30 = bLo30 + 5;
 			if (side == 1)
-				//tmp_link_out[idx].range(bHi30, bLo30) = calo_coor[idx_srt].ieta - so_out_tau_iso[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi30, bLo30) = calo_coor[idx_srt].ieta - so_in_tau_iso[idx].rloc_eta;
 			else
-				//tmp_link_out[idx].range(bHi30, bLo30) = calo_coor[idx_srt].ieta + so_out_tau_iso[idx].rloc_eta;
 				tmp_link_out[idx].range(bHi30, bLo30) = calo_coor[idx_srt].ieta + so_in_tau_iso[idx].rloc_eta;
 
 			if((double)tmp_link_out[idx].range(bHi27, bLo27) > 0) cout << "Tau Iso " << idx << " ET: " << dec << tmp_link_out[idx].range(bHi27, bLo27) << " Side: " << tmp_link_out[idx].range(bHi28, bLo28) << " iPhi: " << tmp_link_out[idx].range(bHi29, bLo29)  << " iEta: " << tmp_link_out[idx].range(bHi30, bLo30) << endl ;

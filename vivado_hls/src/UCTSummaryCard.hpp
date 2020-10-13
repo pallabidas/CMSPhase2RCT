@@ -14,9 +14,9 @@ using std::bitset;
 // Number of calorimeter regions (central + forward)
 #define NR_CALO_REG (NR_CNTR_REG + NR_FWD_REG)
 // Number of central super-regions (2x2)
-#define NR_SCNTR_REG (63)
+#define NR_SCNTR_REG (16)
 // Number of forward super-regions (2x2)
-#define NR_SFWD_REG (54)
+#define NR_SFWD_REG (16)
 // Number of super-regions (2x2)
 #define NR_SUPER_REG (NR_SCNTR_REG + NR_SFWD_REG)
 
