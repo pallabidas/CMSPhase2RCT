@@ -47,8 +47,9 @@ const ap_ufixed<7, 3, AP_RND, AP_SAT> pum_lut[18][26] =
 void pu_lut(ap_uint<5> pum_bin, ap_uint<10> et[NR_CALO_REG],
 		ap_uint<10> pu_sub_et[NR_CALO_REG])
 {
-#pragma HLS ARRAY_PARTITION variable=et complete dim=1
-#pragma HLS ARRAY_PARTITION variable=pu_sub_et complete dim=1
+#pragma HLS inline
+#pragma HLS ARRAY_RESHAPE variable=et complete dim=1
+#pragma HLS ARRAY_RESHAPE variable=pu_sub_et complete dim=1
 
 	ap_uint<10> et_tmp, et_pu_min, pu_tmp;
 

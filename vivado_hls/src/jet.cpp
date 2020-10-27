@@ -7,16 +7,16 @@ void jet(ap_uint<10> jet_seed,             // input
 			  ap_uint<10> et_3by3[NR_CALO_REG], // input 26x18
 			  ap_uint<10> et_jet [NR_CALO_REG]) // *output* 26x18
 {
-
+#pragma HLS inline
 	bool jet_veto[NR_CALO_REG];
 
 #pragma HLS INTERFACE ap_none port=jet_seed
 
 #pragma HLS PIPELINE II=3 // target clk freq = 120 MHz
 
-#pragma HLS ARRAY_PARTITION  variable=et_rgn    complete  dim=1
-#pragma HLS ARRAY_PARTITION  variable=et_3by3   complete  dim=1
-#pragma HLS ARRAY_PARTITION  variable=et_jet    complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=et_rgn    complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=et_3by3   complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=et_jet    complete  dim=1
 #pragma HLS ARRAY_RESHAPE  variable=jet_veto  complete  dim=1
 
 	loop_rgn_et: for (int idx = 0; idx < NR_CALO_REG; idx++)

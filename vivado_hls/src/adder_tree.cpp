@@ -51,6 +51,7 @@ const ap_fixed<8, 1, AP_RND, AP_SAT> cos_phi_lut[] =
 
 sums_t ener_sums(ap_uint<10> et[NR_CALO_REG], ap_uint<10> ht_thr)
 {
+#pragma HLS inline
 #pragma HLS PIPELINE II=3
 
 	sums_t sums;
