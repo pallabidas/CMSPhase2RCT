@@ -11,6 +11,7 @@ void jet(ap_uint<10> jet_seed,             // input
 
 	bool jet_veto[NR_CALO_REG];
 	ap_uint<10> sr_et[NR_SUPER_REG];
+	ap_uint<10> sr_et_jet[NR_SUPER_REG];
 	ap_uint<9> sr_idx[NR_SUPER_REG];
 
 #pragma HLS INTERFACE ap_none port=jet_seed
@@ -23,6 +24,7 @@ void jet(ap_uint<10> jet_seed,             // input
 #pragma HLS ARRAY_RESHAPE  variable=rIdx_jet  complete  dim=1
 #pragma HLS ARRAY_RESHAPE  variable=jet_veto  complete  dim=1
 #pragma HLS ARRAY_RESHAPE  variable=sr_et     complete  dim=1
+#pragma HLS ARRAY_RESHAPE  variable=sr_et_jet complete  dim=1
 #pragma HLS ARRAY_RESHAPE  variable=sr_idx    complete  dim=1
 #pragma HLS inline
 
@@ -30,6 +32,7 @@ void jet(ap_uint<10> jet_seed,             // input
 	{
 #pragma HLS UNROLL
 		sr_et[idx] = 0;
+		sr_et_jet[idx] = 0;
 		sr_idx[idx] = 0;
 	}
 
@@ -38,8 +41,7 @@ void jet(ap_uint<10> jet_seed,             // input
 #pragma HLS UNROLL
 		ap_uint<8> sidx = super_region_idx[idx];
 
-		ap_uint<10> et_C, et_N, et_E, et_W, et_S,
-					et_NE, et_NW, et_SE, et_SW;
+		ap_uint<10> et_C, et_N, et_E, et_W, et_S, et_NE, et_NW, et_SE, et_SW;
 
 		et_C = et_rgn[rgn_nghbr[idx].nb_C]; // center
 		et_N = et_rgn[rgn_nghbr[idx].nb_N]; // north
@@ -69,22 +71,22 @@ void jet(ap_uint<10> jet_seed,             // input
 			et_SW = 0;
 		}
 
-		jet_veto[idx] = false;
-
 		if (et_C < jet_seed)  jet_veto[idx] = true;
-		if (et_C < et_N)      jet_veto[idx] = true;
-		if (et_C < et_E)      jet_veto[idx] = true;
-		if (et_C < et_W)      jet_veto[idx] = true;
-		if (et_C < et_S)      jet_veto[idx] = true;
-		if (et_C < et_NW)     jet_veto[idx] = true;
-		if (et_C < et_NE)     jet_veto[idx] = true;
-		if (et_C < et_SE)     jet_veto[idx] = true;
-		if (et_C < et_SW)     jet_veto[idx] = true;
+		else if (et_C < et_N)      jet_veto[idx] = true;
+		else if (et_C < et_E)      jet_veto[idx] = true;
+		else if (et_C < et_W)      jet_veto[idx] = true;
+		else if (et_C < et_S)      jet_veto[idx] = true;
+		else if (et_C < et_NW)     jet_veto[idx] = true;
+		else if (et_C < et_NE)     jet_veto[idx] = true;
+		else if (et_C < et_SE)     jet_veto[idx] = true;
+		else if (et_C < et_SW)     jet_veto[idx] = true;
+		else jet_veto[idx] = false;
 
 	        // assign et_jet
-		if (jet_veto[idx] == false  && et_3by3[idx] > sr_et[sidx])
+		if (jet_veto[idx] == false && et_rgn[idx] > sr_et[sidx])
 		{
-			sr_et[sidx] = et_3by3[idx];
+			sr_et[sidx] = et_rgn[idx];
+			sr_et_jet[sidx] = et_3by3[idx];
 			sr_idx[sidx] = idx;
 		}
 	}
@@ -92,7 +94,7 @@ void jet(ap_uint<10> jet_seed,             // input
 	for (int idx = 0; idx < NR_SUPER_REG; idx++)
 	{
 #pragma HLS UNROLL
-		et_jet[idx] = sr_et[idx];
+		et_jet[idx] = sr_et_jet[idx];
 		rIdx_jet[idx] = sr_idx[idx];
 	}
 
