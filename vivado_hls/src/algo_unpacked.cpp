@@ -373,7 +373,7 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		}
 
 		{ // Forward Jets
-			int bLo5 = 16 + 25 + 1;
+			int bLo5 = 16 + 25;
 			int bHi5 = bLo5 + 10;
 			tmp_link_out[idx].range(bHi5, bLo5) = so_in_jet_fwd[idx].et;
 			idx_srt = so_in_jet_fwd[idx].idx;
@@ -398,7 +398,7 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		}
 		
 		{ // Boosted jets
-			int bLo9 = 16 + 25 + 25 + 1;
+			int bLo9 = 16 + 25 + 25;
 			int bHi9 = bLo9 + 10;
 			tmp_link_out[idx].range(bHi9, bLo9) = so_in_jet_boosted[idx].et;
 			idx_srt = so_in_jet_boosted[idx].idx;
@@ -431,7 +431,7 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		}
 
 		{ // EG NonIso
-			int bLo15 = 16 + 25 + 25 + 31 + 1;
+			int bLo15 = 16 + 25 + 25 + 31;
 			int bHi15 = bLo15 + 8;
 			tmp_link_out[idx].range(bHi15, bLo15) = so_in_eg_noniso[idx].et;
 			idx_srt = so_in_eg_noniso[idx].idx;
@@ -456,7 +456,7 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		}
 
 		{ //EG ISO
-			int bLo19 = 16 + 25 + 25 + 31 + 23 + 1;
+			int bLo19 = 16 + 25 + 25 + 31 + 23;
 			int bHi19 = bLo19 + 8;
 			tmp_link_out[idx].range(bHi19, bLo19) = so_in_eg_iso[idx].et;
 			idx_srt = so_in_eg_iso[idx].idx;
@@ -481,7 +481,7 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		}
 
 		{ // Tau NonIso
-			int bLo23 = 16 + 25 + 25 + 31 + 23 + 23 + 1;
+			int bLo23 = 16 + 25 + 25 + 31 + 23 + 23;
 			int bHi23 = bLo23 + 8;
 			tmp_link_out[idx].range(bHi23, bLo23) = so_in_tau_noniso[idx].et;
 			idx_srt = so_in_tau_noniso[idx].idx;
@@ -506,7 +506,7 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		}
 
 		{ //Tau ISO
-			int bLo27 = 16 + 25 + 25 + 31 + 23 + 23 + 23 + 1;
+			int bLo27 = 16 + 25 + 25 + 31 + 23 + 23 + 23;
 			int bHi27 = bLo27 + 8;
 			tmp_link_out[idx].range(bHi27, bLo27) = so_in_tau_iso[idx].et;
 			idx_srt = so_in_tau_iso[idx].idx;
