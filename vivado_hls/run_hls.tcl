@@ -4,7 +4,7 @@
 array set opt {
     csim   1
     synth  1
-    cosim  1
+    cosim  0
     export 1
     tv tv_RCT1_3CS_set1
 }

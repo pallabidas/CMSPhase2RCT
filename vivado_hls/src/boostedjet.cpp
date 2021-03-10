@@ -65,7 +65,7 @@ void boostedjet(ap_uint<10> jet_seed,
 
 #pragma HLS INTERFACE ap_none port=jet_seed
 
-#pragma HLS PIPELINE II=3 // target clk freq = 120 MHz
+#pragma HLS PIPELINE II=3
 
 #pragma HLS ARRAY_RESHAPE  variable=regions   complete  dim=1
 #pragma HLS ARRAY_RESHAPE  variable=et_3by3   complete  dim=1
@@ -194,6 +194,8 @@ void boostedjet(ap_uint<10> jet_seed,
 				et_SW = 0;
 				tauveto_SW = false;
 			}
+
+			//jet_veto[idx] = false;
 
 			if (et_C < jet_seed)  jet_veto[idx] = true;
 			else if (et_C < et_N)      jet_veto[idx] = true;
