@@ -110,7 +110,6 @@ void boostedjet(ap_uint<10> jet_seed,
 		else
 		{
 			ap_uint<10> et_C, et_N, et_S, et_E, et_W, et_NE, et_NW, et_SE, et_SW, et_f;
-			bool tauveto_C, tauveto_N, tauveto_S, tauveto_E, tauveto_W, tauveto_NE, tauveto_NW, tauveto_SE, tauveto_SW;
 			ap_int<10> neigh_N = region_cntr_neighbors[idx].nb_N;
 			ap_int<10> neigh_S = region_cntr_neighbors[idx].nb_S;
 			ap_int<10> neigh_E = region_cntr_neighbors[idx].nb_E;
@@ -121,81 +120,62 @@ void boostedjet(ap_uint<10> jet_seed,
 			ap_int<10> neigh_SW = region_cntr_neighbors[idx].nb_SW;
 
 			et_C = regions[idx].et; 
-			tauveto_C = regions[idx].tau_veto;
 
 			if (neigh_N != -1) {
 				et_N = regions[neigh_N].et; 
-				tauveto_N = regions[neigh_N].tau_veto;
 			}
 			else {
 				et_N = 0;
-				tauveto_N = false;
 			}
 
 			if (neigh_S != -1) {
 				et_S = regions[neigh_S].et;
-				tauveto_S = regions[neigh_S].tau_veto;
 			}
 			else {
 				et_S = 0;
-				tauveto_S = false;
 			}
 
 			if (neigh_E != -1) {
 				et_E  = regions[neigh_E].et; 
-				tauveto_E  = regions[neigh_E].tau_veto;
 			}
 			else {
 				et_E  = 0;
-				tauveto_E  = false;
 			}
 
 			if (neigh_W != -1) {
 				et_W  = regions[neigh_W].et;
-				tauveto_W = regions[neigh_W].tau_veto;
 			}
 			else {
 				et_W = 0;
-				tauveto_W = false;
 			}
 
 			if (neigh_NE != -1) {
 				et_NE = regions[neigh_NE].et; 
-				tauveto_NE = regions[neigh_NE].tau_veto;
 			}
 			else {
 				et_NE = 0;
-				tauveto_NE = false;
 			}
 
 			if (neigh_NW != -1) {
 				et_NW = regions[neigh_NW].et; 
-				tauveto_NW = regions[neigh_NW].tau_veto;
 			}
 			else {
 				et_NW = 0;
-				tauveto_NW = false;
 			}
 
 			if (neigh_SE != -1) {
 				et_SE = regions[neigh_SE].et; 
-				tauveto_SE = regions[neigh_SE].tau_veto;
 			}
 			else {
 				et_SE = 0;
-				tauveto_SE = false;
 			}
 
 			if (neigh_SW != -1) {
 				et_SW = regions[neigh_SW].et; 
-				tauveto_SW = regions[neigh_SW].tau_veto;
 			}
 			else {
 				et_SW = 0;
-				tauveto_SW = false;
 			}
-
-			//jet_veto[idx] = false;
 
 			if (et_C < jet_seed)  jet_veto[idx] = true;
 			else if (et_C < et_N)      jet_veto[idx] = true;
@@ -213,23 +193,23 @@ void boostedjet(ap_uint<10> jet_seed,
 			{
 				et_j = et_3by3[idx];
 				et_f = et_j >> 4;
-				if (!tauveto_C && et_C > 30 && et_C > et_f) activeRegion[4] = true;
+				if(et_C > 30 && et_C > et_f) activeRegion[4] = true;
 				else activeRegion[4] = false;
-				if (!tauveto_N && et_N > 30 && et_N > et_f) activeRegion[3] = true;
+				if(et_N > 30 && et_N > et_f) activeRegion[3] = true;
 				else activeRegion[3] = false;
-				if (!tauveto_E && et_E > 30 && et_E > et_f) activeRegion[1] = true;
+				if(et_E > 30 && et_E > et_f) activeRegion[1] = true;
 				else activeRegion[1] = false;
-				if (!tauveto_W && et_W > 30 && et_W > et_f) activeRegion[7] = true;
+				if(et_W > 30 && et_W > et_f) activeRegion[7] = true;
 				else activeRegion[7] = false;
-				if (!tauveto_S && et_S > 30 && et_S > et_f) activeRegion[5] = true;
+				if(et_S > 30 && et_S > et_f) activeRegion[5] = true;
 				else activeRegion[5] = false;
-				if (!tauveto_NW && et_NW > 30 && et_NW > et_f) activeRegion[6] = true;
+				if(et_NW > 30 && et_NW > et_f) activeRegion[6] = true;
 				else activeRegion[6] = false;
-				if (!tauveto_NE && et_NE > 30 && et_NE > et_f) activeRegion[0] = true;
+				if(et_NE > 30 && et_NE > et_f) activeRegion[0] = true;
 				else activeRegion[0] = false;
-				if (!tauveto_SW && et_SW > 30 && et_SW > et_f) activeRegion[8] = true;
+				if(et_SW > 30 && et_SW > et_f) activeRegion[8] = true;
 				else activeRegion[8] = false;
-				if (!tauveto_SE && et_SE > 30 && et_SE > et_f) activeRegion[2] = true;
+				if(et_SE > 30 && et_SE > et_f) activeRegion[2] = true;
 				else activeRegion[2] = false;
 				reta_jet = etapattern(activeRegion);
 				rphi_jet = phipattern(activeRegion);
