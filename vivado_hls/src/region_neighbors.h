@@ -24,8 +24,7 @@ typedef struct
 typedef struct {
 
 	// Neighbour coordinates (-1 to indicate no neighbour)
-	ap_int<9> nb_reg;
-
+	ap_int<9> nb_C;
 	ap_int<9> nb_N;
 	ap_int<9> nb_S;
 	ap_int<9> nb_E;
