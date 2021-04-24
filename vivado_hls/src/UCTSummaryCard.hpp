@@ -121,7 +121,7 @@ algo_outputs_t & algo_outputs
 
 );
 
-ap_uint<8> popcount(ap_uint<NR_CALO_REG> bitString);
+ap_uint<8> popcount(ap_uint<NR_CNTR_REG> bitString);
 
 //void superregion_centre(ap_uint<10> et[NR_CNTR_REG], int sr_centre_index[NR_SCNTR_REG]);
 
