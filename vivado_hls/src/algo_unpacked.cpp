@@ -52,11 +52,8 @@ void algo_unpacked(ap_uint<112> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 	// otherwise algorithm clock input (ap_clk) gets optimized away
 #pragma HLS latency min=3
 
-
 	static bool first = true; //true to print 
-	//region_t calo_regions[NR_CNTR_REG];
 	region_t centr_region[NR_CNTR_REG];
-//#pragma HLS ARRAY_PARTITION variable=calo_regions complete dim=1
 #pragma HLS ARRAY_PARTITION variable=centr_region complete dim=1
 	regionLoop: for(int iRegion = 0; iRegion < NR_CNTR_REG; iRegion++) {
 #pragma HLS UNROLL
@@ -80,7 +77,6 @@ void algo_unpacked(ap_uint<112> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		centr_region[iRegion].rloc_phi = link_in[link_idx].range(bitHi3, bitLo3);   // 2 bits
 		centr_region[iRegion].eg_veto = link_in[link_idx].range(bitHi4, bitLo4);   // 1 bit
 		centr_region[iRegion].tau_veto = link_in[link_idx].range(bitHi5, bitLo5);   // 1 bit
-		//if(first && calo_regions[iRegion].et > 0) printf("calo_regions[%d] = link_in[%d].range(%d, %d) = %d;\n", iRegion, link_idx, bitLo+9, bitLo, calo_regions[iRegion]);
 		if((double)centr_region[iRegion].et > 0) cout << "Calo region " << " ET: " << centr_region[iRegion].et << " Eta: " << centr_region[iRegion].rloc_eta << " Phi: " << centr_region[iRegion].rloc_phi << " EG veto: " << centr_region[iRegion].eg_veto << " Tau veto: " << centr_region[iRegion].tau_veto << endl;
 	}
       
@@ -103,10 +99,6 @@ void algo_unpacked(ap_uint<112> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 	ap_uint<PUM_LEVEL_BITSIZE> pum_level;
 	ap_uint<5> pum_bin;
 
-	ap_uint<13> et_total_tmp = 0;
-	ap_uint<13> et_total_ht_tmp = 0;
-
-	region_t fwd_region[NR_FWD_REG];
 	region_t centr_region_pu_sub[NR_CNTR_REG];
 
 ///////////////////////////////////////////////////////////
@@ -124,8 +116,6 @@ void algo_unpacked(ap_uint<112> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 
 #pragma HLS INTERFACE ap_none port=algo_config
 
-//#pragma HLS ARRAY_RESHAPE variable=centr_region complete dim=1
-#pragma HLS ARRAY_RESHAPE variable=fwd_region complete dim=1
 #pragma HLS ARRAY_RESHAPE variable=centr_region_pu_sub complete dim=1
 
 #pragma HLS ARRAY_RESHAPE variable=so_in_jet_boosted complete dim=0
@@ -154,9 +144,9 @@ void algo_unpacked(ap_uint<112> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		}
 	}
 
-	// count number of ones in tmp variable
+	// Count number of ones in tmp variable
 	pum_level = popcount(tmp);
-	pum_bin = pum_level / 26;
+	pum_bin = pum_level / 14;
 
 ////////////////////////////////////////////////////////////
 	// Unpack calo ET values in et_calo array
@@ -165,8 +155,6 @@ void algo_unpacked(ap_uint<112> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 #pragma HLS UNROLL
 		et_calo[idx] = centr_region[idx].et;
 	}
-
-
 
 ////////////////////////////////////////////////////////////
 	// Calculate pile-up subtracted ET values: pu_sub_et_calo
@@ -178,29 +166,16 @@ void algo_unpacked(ap_uint<112> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 	for (int idx = 0; idx < NR_CNTR_REG; idx++)
 	{
 #pragma HLS UNROLL
-
+		centr_region_pu_sub[idx].et = pu_sub_et_calo[idx];
 		centr_region_pu_sub[idx].eg_veto = centr_region[idx].eg_veto;
 		centr_region_pu_sub[idx].tau_veto = centr_region[idx].tau_veto;
 		centr_region_pu_sub[idx].rloc_eta = centr_region[idx].rloc_eta;
 		centr_region_pu_sub[idx].rloc_phi = centr_region[idx].rloc_phi;
 	}
 
-	for (unsigned int phi = 0; phi < 18; phi++)
-	{
-#pragma HLS UNROLL
-
-		for (int reg = 0; reg < 14; reg++)
-		{
-#pragma HLS UNROLL
-			centr_region_pu_sub[phi * 14 + reg].et = pu_sub_et_calo[phi * 14 + reg];
-		}
-	}
-
-
-	boostedjet(algo_config.jet_seed, centr_region_pu_sub, et_3by3_calo, et_jet_boosted, rEta_jet_boosted, rPhi_jet_boosted, rIdx_boostedjet);
-
 ////////////////////////////////////////////////////////////
 	// Prepare algorithm results
+	boostedjet(algo_config.jet_seed, centr_region_pu_sub, et_3by3_calo, et_jet_boosted, rEta_jet_boosted, rPhi_jet_boosted, rIdx_boostedjet);
 
 	for (int idx = 0; idx < NR_SCNTR_REG; idx++)
 	{
@@ -212,6 +187,7 @@ void algo_unpacked(ap_uint<112> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		so_in_jet_boosted[idx].range(31, 26) = centr_region[idx_jet_in].rloc_eta;
 	}
 
+	// Sorting objects
 	bitonicSort16(so_in_jet_boosted, so_out_jet_boosted);
 
 	// Assign the algorithnm outputs
@@ -243,7 +219,7 @@ void algo_unpacked(ap_uint<112> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 			else
 				tmp_link_out[idx].range(bHi12, bLo12) = calo_coor[idx_srt].ieta + so_out_jet_boosted[idx].range(31, 26);
 
-			if((double)tmp_link_out[idx].range(bHi9, bLo9) > 0) cout << "Jet Boosted " << idx << " ET: " << dec << tmp_link_out[idx].range(bHi9, bLo9) << " Side: " << tmp_link_out[idx].range(bHi10, bLo10) << " iPhi: " << tmp_link_out[idx].range(bHi11, bLo11)  << " iEta: " << tmp_link_out[idx].range(bHi12, bLo12) << endl;
+			if((double)tmp_link_out[idx].range(bHi9, bLo9) > 0) cout << "Boosted jet :" << idx << " ET: " << dec << tmp_link_out[idx].range(bHi9, bLo9) << " Side: " << tmp_link_out[idx].range(bHi10, bLo10) << " iPhi: " << tmp_link_out[idx].range(bHi11, bLo11)  << " iEta: " << tmp_link_out[idx].range(bHi12, bLo12) << endl;
 		}
 	}
 
