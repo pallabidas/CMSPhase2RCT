@@ -194,7 +194,7 @@ void boostedjet(ap_uint<10> jet_seed,
 			// assign et_jet and pattern
 			if (jet_veto[idx] == false)
 			{
-				et_j = et_3by3[idx];
+				et_j = et_C + et_N + et_E + et_W + et_S + et_NW + et_NE + et_SW + et_SE;
 				et_f = et_j >> 4;
 				if(et_C > 30 && et_C > et_f) activeRegion[4] = true;
 				else activeRegion[4] = false;
@@ -220,6 +220,16 @@ void boostedjet(ap_uint<10> jet_seed,
 			else
 			{
 				et_j = 0;
+				et_f = 0;
+				activeRegion[4] = false;
+				activeRegion[3] = false;
+				activeRegion[1] = false;
+				activeRegion[7] = false;
+				activeRegion[5] = false;
+				activeRegion[6] = false;
+				activeRegion[0] = false;
+				activeRegion[8] = false;
+				activeRegion[2] = false;
 				reta_jet = 0;
 				rphi_jet = 0;
 			}
@@ -228,7 +238,7 @@ void boostedjet(ap_uint<10> jet_seed,
 		if (regions[idx].et > sr_et[sidx] && ((reta_jet == b1) || (reta_jet == b2) || (reta_jet == b3) || (rphi_jet == b1) || (rphi_jet == b2) || (rphi_jet == b3)))
 		{
 			sr_et[sidx] = regions[idx].et;
-			sr_et_jet[sidx] = et_j;
+			sr_et_jet[sidx] = et_3by3[idx];
 			sr_eta[sidx] = reta_jet;
 			sr_phi[sidx] = rphi_jet;
 			sr_idx[sidx] = idx;
