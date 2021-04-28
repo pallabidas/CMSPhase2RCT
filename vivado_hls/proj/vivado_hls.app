@@ -3,7 +3,10 @@
         <file name="../../data/test_random112_out_ref.txt" sc="0" tb="1" cflags="  -Wno-unknown-pragmas"/>
         <file name="../../data/test_random112_inp.txt" sc="0" tb="1" cflags="  -Wno-unknown-pragmas"/>
         <file name="../../src/algo_unpacked_tb.cpp" sc="0" tb="1" cflags="  -Wno-unknown-pragmas"/>
-        <file name="src/bitonicSort16.cpp" sc="0" tb="false" cflags=""/>
+        <file name="src/bitonic32Dec.cpp" sc="0" tb="false" cflags=""/>
+        <file name="src/bitonic32Inc.cpp" sc="0" tb="false" cflags=""/>
+        <file name="src/bitonicSort64.cpp" sc="0" tb="false" cflags=""/>
+        <file name="src/bitonicFun64.cpp" sc="0" tb="false" cflags=""/>
         <file name="src/boostedjet.cpp" sc="0" tb="false" cflags=""/>
         <file name="src/PU_LUT.cpp" sc="0" tb="false" cflags=""/>
         <file name="src/et_3by3.cpp" sc="0" tb="false" cflags=""/>

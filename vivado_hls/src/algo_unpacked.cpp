@@ -15,7 +15,7 @@ using namespace std;
 #include "PU_LUT.h"
 #include "calo_out_coordinates.h"
 #include "superregion.h"
-#include "bitonicSort16.h"
+#include "bitonicSort64.h"
 
 const uint16_t NRegionsPerLink = 7; // Bits 16-31, 32-47, ..., 96-112, keeping range(15, 0) unused
 const uint16_t MaxRegions = N_CH_IN * NRegionsPerLink;
@@ -92,8 +92,8 @@ void algo_unpacked(ap_uint<112> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 	bitset<3>  rPhi_jet_boosted[NR_SCNTR_REG];
 	ap_uint<9> rIdx_boostedjet[NR_SCNTR_REG];
 	
-	ap_uint<32> so_in_jet_boosted[16];
-	ap_uint<32> so_out_jet_boosted[16];
+	ap_uint<32> so_in_jet_boosted[64];
+	ap_uint<32> so_out_jet_boosted[64];
 
 	ap_uint<NR_CNTR_REG> tmp = 0;
 	ap_uint<PUM_LEVEL_BITSIZE> pum_level;
@@ -186,9 +186,10 @@ void algo_unpacked(ap_uint<112> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 		so_in_jet_boosted[idx].range(25, 19) = centr_region[idx_jet_in].rloc_phi;
 		so_in_jet_boosted[idx].range(31, 26) = centr_region[idx_jet_in].rloc_eta;
 	}
+	so_in_jet_boosted[63] = 0;
 
 	// Sorting objects
-	bitonicSort16(so_in_jet_boosted, so_out_jet_boosted);
+	bitonicSort64(so_in_jet_boosted, so_out_jet_boosted);
 
 	// Assign the algorithnm outputs
 	for (int idx = 0; idx < 12; idx++)
