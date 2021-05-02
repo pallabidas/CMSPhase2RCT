@@ -28,6 +28,7 @@ architecture rtl of algo_top_wrapper is
 
   type t_cyc_3_arr is array(integer range <>) of integer range 0 to 2;
   type t_slv_192_arr is array(integer range <>) of std_logic_vector(191 downto 0);
+  type t_slv_112_arr is array(integer range <>) of std_logic_vector(111 downto 0);
 
   component algo_unpacked
     port (
@@ -38,54 +39,54 @@ architecture rtl of algo_top_wrapper is
       ap_idle  : out std_logic;
       ap_ready : out std_logic;
 
-      link_in_0_V  : in std_logic_vector (191 downto 0);
-      link_in_1_V  : in std_logic_vector (191 downto 0);
-      link_in_2_V  : in std_logic_vector (191 downto 0);
-      link_in_3_V  : in std_logic_vector (191 downto 0);
-      link_in_4_V  : in std_logic_vector (191 downto 0);
-      link_in_5_V  : in std_logic_vector (191 downto 0);
-      link_in_6_V  : in std_logic_vector (191 downto 0);
-      link_in_7_V  : in std_logic_vector (191 downto 0);
-      link_in_8_V  : in std_logic_vector (191 downto 0);
-      link_in_9_V  : in std_logic_vector (191 downto 0);
-      link_in_10_V : in std_logic_vector (191 downto 0);
-      link_in_11_V : in std_logic_vector (191 downto 0);
-      link_in_12_V : in std_logic_vector (191 downto 0);
-      link_in_13_V : in std_logic_vector (191 downto 0);
-      link_in_14_V : in std_logic_vector (191 downto 0);
-      link_in_15_V : in std_logic_vector (191 downto 0);
-      link_in_16_V : in std_logic_vector (191 downto 0);
-      link_in_17_V : in std_logic_vector (191 downto 0);
-      link_in_18_V : in std_logic_vector (191 downto 0);
-      link_in_19_V : in std_logic_vector (191 downto 0);
-      link_in_20_V : in std_logic_vector (191 downto 0);
-      link_in_21_V : in std_logic_vector (191 downto 0);
-      link_in_22_V : in std_logic_vector (191 downto 0);
-      link_in_23_V : in std_logic_vector (191 downto 0);
-      link_in_24_V : in std_logic_vector (191 downto 0);
-      link_in_25_V : in std_logic_vector (191 downto 0);
-      link_in_26_V : in std_logic_vector (191 downto 0);
-      link_in_27_V : in std_logic_vector (191 downto 0);
-      link_in_28_V : in std_logic_vector (191 downto 0);
-      link_in_29_V : in std_logic_vector (191 downto 0);
-      link_in_30_V : in std_logic_vector (191 downto 0);
-      link_in_31_V : in std_logic_vector (191 downto 0);
-      link_in_32_V : in std_logic_vector (191 downto 0);
-      link_in_33_V : in std_logic_vector (191 downto 0);
-      link_in_34_V : in std_logic_vector (191 downto 0);
-      link_in_35_V : in std_logic_vector (191 downto 0);
-      link_in_36_V : in std_logic_vector (191 downto 0);
-      link_in_37_V : in std_logic_vector (191 downto 0);
-      link_in_38_V : in std_logic_vector (191 downto 0);
-      link_in_39_V : in std_logic_vector (191 downto 0);
-      link_in_40_V : in std_logic_vector (191 downto 0);
-      link_in_41_V : in std_logic_vector (191 downto 0);
-      link_in_42_V : in std_logic_vector (191 downto 0);
-      link_in_43_V : in std_logic_vector (191 downto 0);
-      link_in_44_V : in std_logic_vector (191 downto 0);
-      link_in_45_V : in std_logic_vector (191 downto 0);
-      link_in_46_V : in std_logic_vector (191 downto 0);
-      link_in_47_V : in std_logic_vector (191 downto 0);
+      link_in_0_V  : in std_logic_vector (111 downto 0);
+      link_in_1_V  : in std_logic_vector (111 downto 0);
+      link_in_2_V  : in std_logic_vector (111 downto 0);
+      link_in_3_V  : in std_logic_vector (111 downto 0);
+      link_in_4_V  : in std_logic_vector (111 downto 0);
+      link_in_5_V  : in std_logic_vector (111 downto 0);
+      link_in_6_V  : in std_logic_vector (111 downto 0);
+      link_in_7_V  : in std_logic_vector (111 downto 0);
+      link_in_8_V  : in std_logic_vector (111 downto 0);
+      link_in_9_V  : in std_logic_vector (111 downto 0);
+      link_in_10_V : in std_logic_vector (111 downto 0);
+      link_in_11_V : in std_logic_vector (111 downto 0);
+      link_in_12_V : in std_logic_vector (111 downto 0);
+      link_in_13_V : in std_logic_vector (111 downto 0);
+      link_in_14_V : in std_logic_vector (111 downto 0);
+      link_in_15_V : in std_logic_vector (111 downto 0);
+      link_in_16_V : in std_logic_vector (111 downto 0);
+      link_in_17_V : in std_logic_vector (111 downto 0);
+      link_in_18_V : in std_logic_vector (111 downto 0);
+      link_in_19_V : in std_logic_vector (111 downto 0);
+      link_in_20_V : in std_logic_vector (111 downto 0);
+      link_in_21_V : in std_logic_vector (111 downto 0);
+      link_in_22_V : in std_logic_vector (111 downto 0);
+      link_in_23_V : in std_logic_vector (111 downto 0);
+      link_in_24_V : in std_logic_vector (111 downto 0);
+      link_in_25_V : in std_logic_vector (111 downto 0);
+      link_in_26_V : in std_logic_vector (111 downto 0);
+      link_in_27_V : in std_logic_vector (111 downto 0);
+      link_in_28_V : in std_logic_vector (111 downto 0);
+      link_in_29_V : in std_logic_vector (111 downto 0);
+      link_in_30_V : in std_logic_vector (111 downto 0);
+      link_in_31_V : in std_logic_vector (111 downto 0);
+      link_in_32_V : in std_logic_vector (111 downto 0);
+      link_in_33_V : in std_logic_vector (111 downto 0);
+      link_in_34_V : in std_logic_vector (111 downto 0);
+      link_in_35_V : in std_logic_vector (111 downto 0);
+     -- link_in_36_V : in std_logic_vector (191 downto 0);
+     --link_in_37_V : in std_logic_vector (191 downto 0);
+     --link_in_38_V : in std_logic_vector (191 downto 0);
+     --link_in_39_V : in std_logic_vector (191 downto 0);
+     --link_in_40_V : in std_logic_vector (191 downto 0);
+     --link_in_41_V : in std_logic_vector (191 downto 0);
+     --link_in_42_V : in std_logic_vector (191 downto 0);
+     --link_in_43_V : in std_logic_vector (191 downto 0);
+     --link_in_44_V : in std_logic_vector (191 downto 0);
+     --link_in_45_V : in std_logic_vector (191 downto 0);
+     --link_in_46_V : in std_logic_vector (191 downto 0);
+     --link_in_47_V : in std_logic_vector (191 downto 0);
 
       link_out_0_V  : out std_logic_vector (191 downto 0);
       link_out_1_V  : out std_logic_vector (191 downto 0);
@@ -201,16 +202,16 @@ architecture rtl of algo_top_wrapper is
   signal ap_idle_unp  : std_logic;
   signal ap_ready_unp : std_logic;
 
-  signal link_in      : t_slv_192_arr(47 downto 0);
+  signal link_in      : t_slv_112_arr(35 downto 0);
   signal link_out     : t_slv_192_arr(47 downto 0);
   
-  signal link_in_reg  : t_slv_192_arr(47 downto 0);
+  signal link_in_reg  : t_slv_112_arr(35 downto 0);
   signal link_out_reg : t_slv_192_arr(47 downto 0);
 
   signal link_out_ap_vld : std_logic_vector(47 downto 0);
   signal link_out_ap_vld_latched : std_logic_vector(47 downto 0);
 
-  signal in_cyc  : t_cyc_3_arr(47 downto 0);
+  signal in_cyc  : t_cyc_3_arr(35 downto 0);
   signal out_cyc : t_cyc_3_arr(47 downto 0);
 
 begin
@@ -228,30 +229,64 @@ begin
      end if;
   end process;
   
-  gen_cyc : for idx in 0 to 47 generate
-    process(ap_clk) is
-    begin
-      if rising_edge(ap_clk) then
-
-        if (link_out_ap_vld(idx) = '1') then
-          link_out_reg(idx) <= link_out(idx);
-        end if;
-
+  -- --------- Link Process  ----- 
+  GenInLink: for idx in 0 to 35 generate 
+    process (ap_clk) is 
+    begin 
+      if(rising_edge(ap_clk)) then 
+      -----------------------------------------------
+      -- Comment. Reset and IN counter 0 to 2 
         if (ap_rst_d2 = '1') then
           in_cyc(idx) <= 0;
         else
           in_cyc(idx) <= in_cyc(idx) + 1;
-          if (in_cyc(idx) = 2) then
+          if ( (idx) = 2) then
             in_cyc(idx) <= 0;
           end if;
         end if;
+  ------------------------------------------------------
+        if (in_cyc(idx) = 0) then 
+            link_in(idx)(63 downto 0)    <= link_in_master(idx).tdata; 
+        end if;
+        
+        if (in_cyc(idx) = 1) then 
+            link_in(idx)(111 downto 64)  <= link_in_master(idx).tdata(47 downto 0); 
+        end if;
+        
+        if (in_cyc(idx) = 2) then 
+            link_in_reg(idx) <= link_in(idx);
+        end if;
+  --------------------------------------------------
+   end if;
+  --------------------------------------------------
+   end process;
+  -----------------------------------------------------
+  end generate;
 
+  gen_cyc : for idx in 0 to 47 generate
+    process(ap_clk) is
+    begin
+      if rising_edge(ap_clk) then
+      
+     -------------------------------------------------
+     ------------------------------------------------
+     -- FF-D  (register to link out (from HLS-VHD) --
+        if (link_out_ap_vld(idx) = '1') then
+          link_out_reg(idx) <= link_out(idx);
+        end if;   
+      -----------------------------------------------
+      -----------------------------------------------
+      -----------------------------------------------
+  -----------------------------------------------------
+  -- Comment Latch t of the  valid from HLS-VHD 
         if (ap_rst = '1') then
           link_out_ap_vld_latched(idx) <= '0';
         elsif (link_out_ap_vld(idx) = '1') then
           link_out_ap_vld_latched(idx) <= '1';
         end if;
-
+ ------------------------------------------------------
+ -----------------------------------------------------
+ -- Active  t valid  , and OUT counter 0 to 2 in order to send 3(64b)word (64x3 = 192)
         if (link_out_ap_vld_latched(idx) = '0') then
           out_cyc(idx)                <= 0;
           link_out_master(idx).tvalid <= '0';
@@ -262,25 +297,11 @@ begin
             out_cyc(idx) <= 0;
           end if;
         end if;
-
-        if (in_cyc(idx) = 0) then 
-            link_in(idx)(63 downto 0)    <= link_in_master(idx).tdata; 
-        end if;
-        
-        if (in_cyc(idx) = 1) then 
-            link_in(idx)(127 downto 64)  <= link_in_master(idx).tdata; 
-        end if;
-        
-        if (in_cyc(idx) = 2) then 
-            link_in_reg(idx)(63 downto 0) <= link_in(idx)(63 downto 0);
-            link_in_reg(idx)(127 downto 64) <= link_in(idx)(127 downto 64);
-            link_in_reg(idx)(191 downto 128) <= link_in_master(idx).tdata; 
-        end if;
-
+  -----------------------------------------------------
         if (out_cyc(idx) = 0) then link_out_master(idx).tdata <= link_out_reg(idx)(63 downto 0); end if;
         if (out_cyc(idx) = 1) then link_out_master(idx).tdata <= link_out_reg(idx)(127 downto 64); end if;
         if (out_cyc(idx) = 2) then link_out_master(idx).tdata <= link_out_reg(idx)(191 downto 128); end if;
-
+  ------------------------------------------------------------
       end if;
     end process;
   end generate;
@@ -336,18 +357,18 @@ begin
       link_in_33_V => link_in_reg(33),
       link_in_34_V => link_in_reg(34),
       link_in_35_V => link_in_reg(35),
-      link_in_36_V => link_in_reg(36),
-      link_in_37_V => link_in_reg(37),
-      link_in_38_V => link_in_reg(38),
-      link_in_39_V => link_in_reg(39),
-      link_in_40_V => link_in_reg(40),
-      link_in_41_V => link_in_reg(41),
-      link_in_42_V => link_in_reg(42),
-      link_in_43_V => link_in_reg(43),
-      link_in_44_V => link_in_reg(44),
-      link_in_45_V => link_in_reg(45),
-      link_in_46_V => link_in_reg(46),
-      link_in_47_V => link_in_reg(47),
+--      link_in_36_V => link_in_reg(36),
+--      link_in_37_V => link_in_reg(37),
+--      link_in_38_V => link_in_reg(38),
+--      link_in_39_V => link_in_reg(39),
+--      link_in_40_V => link_in_reg(40),
+--      link_in_41_V => link_in_reg(41),
+--      link_in_42_V => link_in_reg(42),
+--      link_in_43_V => link_in_reg(43),
+--      link_in_44_V => link_in_reg(44),
+--      link_in_45_V => link_in_reg(45),
+--      link_in_46_V => link_in_reg(46),
+--      link_in_47_V => link_in_reg(47),
 
       link_out_0_V  => link_out(0),
       link_out_1_V  => link_out(1),
