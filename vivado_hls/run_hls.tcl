@@ -5,7 +5,7 @@ array set opt {
     csim   1
     synth  1
     cosim  0
-    export 0
+    export 1
     tv test_random112
 }
 
